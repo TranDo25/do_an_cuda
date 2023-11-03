@@ -14,6 +14,27 @@ struct Point {
     Point() {}
     Point(double x, double y) : x(x), y(y) {}
 };
+vector<int> find_list_index(vector<tuple<double, double>> Ptest, tuple<double, double> pdoubt) {
+    // Tạo mảng kết quả chứa các chỉ số tìm thấy
+    vector<int> result;
+
+    // Lặp qua từng phần tử trong mảng Ptest
+    for (int i = 0; i < Ptest.size(); i++) {
+        // Kiểm tra xem phần tử hiện tại có phải là pdoubt không
+        if (Ptest[i] == pdoubt) {
+            // Thêm chỉ số hiện tại vào mảng kết quả
+            result.push_back(i);
+        }
+    }
+
+    // Trả về mảng kết quả
+    return result;
+}
+std::vector<std::tuple<double, double>> insert(std::vector<std::tuple<double, double>> P, int pdoubt_index, std::tuple<double, double> p_hat_plus) {
+    // Chèn phần tử mới vào vị trí thứ pdoubt_index
+    P.insert(P.begin() + pdoubt_index, p_hat_plus);
+    return P;
+}
 vector<tuple<double, double>> delete_tuple_by_index(vector<tuple<double, double>>& v, int index) {
     // Tạo một vector mới để lưu kết quả
     vector<tuple<double, double>> v_result;
@@ -387,7 +408,7 @@ void OuterConvexApproximation(Point* in_poly, int& n_poly, double δ = 0.0) {
         vector<tuple<double, double>> Pdoubt = P;
         vector<tuple<double, double>> Ptest = P;
         // Declare global variables
-        int count, count4, count1, count2, count3;
+        int count = 0, count4 = 0, count1 = 0, count2 = 0, count3 = 0;
 
         while (Pdoubt.size() > 0) {
             count += 1;
@@ -455,18 +476,41 @@ void OuterConvexApproximation(Point* in_poly, int& n_poly, double δ = 0.0) {
                 int pdoubt_indexp = tim_chi_so_phan_tu_tuple(P, pdoubt);
                 int pdoubt_index = tim_chi_so_phan_tu_tuple(Pdoubt, pdoubt);
                 Pdoubt = deleteTuple(Pdoubt, pdoubt);
-                if (allclose(pdoubt, p_hat_minus) == true && allclose(pdoubt, p_hat_plus)) {
+                if (allclose(convertTupleToMatrix(pdoubt), p_hat_minus) == true && allclose(convertTupleToMatrix(pdoubt), p_hat_plus) == true) {
                     count4++;
                     int ptest_index = tim_chi_so_phan_tu_tuple(Ptest, pdoubt);
                     Ptest = dao_vi_tri_ptest(Ptest, ptest_index);
                 }
                 else {
                     P = delete_tuple_by_index(P, pdoubt_indexp);
-
+                    int ptest_index = tim_chi_so_phan_tu_tuple(Ptest, pdoubt);
+                    Ptest = delete_tuple_by_index(Ptest, ptest_index);
+                    if (allclose(p_hat_plus, convertTupleToMatrix(pdoubt_plus))) {
+                        cout << "1" << endl;
+                    }
+                    else {
+                        P = insert(P, pdoubt_indexp, convertMatrixToTuple(p_hat_plus));
+                        Pdoubt = insert(Pdoubt, pdoubt_index, convertMatrixToTuple( p_hat_plus));
+                        Ptest = insert(Ptest, ptest_index, convertMatrixToTuple(p_hat_plus));
+                    }
+                    if (allclose(p_hat_minus, convertTupleToMatrix(pdoubt_minus))) {
+                        cout << "2" << endl;
+                    }
+                    else {
+                        P = insert(P, pdoubt_indexp, convertMatrixToTuple(p_hat_minus));
+                        Pdoubt = insert(Pdoubt, pdoubt_index, convertMatrixToTuple(p_hat_minus));
+                        Ptest = insert(Ptest, ptest_index, convertMatrixToTuple(p_hat_minus));
+                    }
 
                 }
             }
-
+            else {
+                count3++;
+                Pdoubt = deleteTuple(Pdoubt, pdoubt);
+                vector<int> ptest_index = find_list_index(Ptest, pdoubt);
+                int first_index = ptest_index.at(0);
+                Ptest = dao_vi_tri_ptest(Ptest, first_index);
+            }
         }
     }
 }
