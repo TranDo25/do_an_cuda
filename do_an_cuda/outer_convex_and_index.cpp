@@ -9,37 +9,28 @@
 #include <ctime>    // Để sử dụng hàm srand()
 #include <iostream>
 #include <random>
+#define MAXN 100
 
+const double EPS = 1E-8;
 using namespace std;
 struct Point {
 	double x, y;
 	Point() {}
 	Point(double x, double y) : x(x), y(y) {}
 };
+int sig(double d) { return (d > EPS) - (d < -EPS); }
+bool point_same(Point& a, Point& b) {
+	return sig(a.x - b.x) == 0 && sig(a.y - b.y) == 0;
+}
+
+
+//================phần bên dưới dùng để đưa vào thư viện==================
 void copy_vector_to_array(Point* dest, const vector<Point>& src, int size) {
 	for (int i = 0; i < size; i++) {
 		dest[i].x = src[i].x;
 		dest[i].y = src[i].y;
 	}
 }
-//void remove_extra_points(Point*& points, size_t size, const std::vector<Point>& reference_points) {
-//	// Tìm chỉ số của phần tử đầu tiên không cần xóa
-//	size_t new_size = std::remove_if(points, points + size, [&reference_points](Point* point) {
-//		return std::find(reference_points.begin(), reference_points.end(), *point) == reference_points.end();
-//		}) - points;
-//
-//	// Tạo một mảng tạm để lưu trữ các Point cần giữ lại
-//	Point* output = new Point[new_size];
-//
-//	// Copy các Point cần giữ lại sang mảng tạm
-//	for (size_t i = 0; i < new_size; i++) {
-//		output[i] = points[i];
-//	}
-//
-//	// Thay thế mảng con trỏ bằng mảng tạm
-//	delete[] points;
-//	points = output;
-//}
 
 std::vector<Point> to_point_vector(const std::vector<std::tuple<double, double>>& input) {
 	std::vector<Point> output;
@@ -55,7 +46,7 @@ void PrintVector(vector<tuple<double, double>>& result) {
 	for (int i = 0; i < result.size(); i++) {
 		cout << "(" << get<0>(result[i]) << ", " << get<1>(result[i]) << ")";
 		if (i < result.size() - 1) {
-			cout << ", "<<endl;
+			cout << ", " << endl;
 		}
 	}
 	cout << "]" << endl;
@@ -402,7 +393,23 @@ tuple<double, double> subtract_tuples(const  tuple<double, double>& t1, const  t
 	return  make_tuple(result1, result2);
 }
 
-vector<tuple<double, double>> OuterConvexApproximation(Point* in_poly, int& n_poly, double δ = 0.0) {
+vector<tuple<double, double>> OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* points_to_convex_ind) {
+	int n_input = n_poly;
+	cout << "n_input  = " << n_input;
+	Point* input_poly = new Point[51];
+	for (int i = 0; i < n_input; i++) {
+		input_poly[i].x = i;
+		input_poly[i].y = i;
+	}
+	for (int i = 0; i < n_input; i++) {
+		input_poly[i].x = in_poly[i].x;
+		input_poly[i].y = in_poly[i].y;
+	}
+	double δ = 0.0;
+	
+	for (int i = 0; i < n_input; i++) {
+		cout << "(" << input_poly[i].x << ", " << input_poly[i].y << ") " << endl;
+	}
 	//khởi tạo mảng xoay R, các hàm sin cos ở dưới cũng dùng thư viện cmath
 	vector<vector<double>> R(2, vector<double>(2));
 	double alpha = -M_PI / 2;
@@ -488,7 +495,7 @@ vector<tuple<double, double>> OuterConvexApproximation(Point* in_poly, int& n_po
 		std::vector<std::vector<double>> dp = divide_matrix(result_mul_matrix, norm_sub_pminus_pplus);
 		//chuyển in_poly về vector X cho dễ tính
 		vector<tuple<double, double>> n_poly_vector = GetEnoughPoints(in_poly, n_poly);
-		
+
 		vector<vector<double>> X_transpose = transposeTupleVector(n_poly_vector);
 		//dp đang là ma trận 2x1, vậy nếu muốn nhân với ma trận có kích thước 2x50 thì phải chuyển vị ma trận dp đi
 		vector<vector<double>> dp_transpose = transpose(dp);
@@ -570,33 +577,47 @@ vector<tuple<double, double>> OuterConvexApproximation(Point* in_poly, int& n_po
 	copy_vector_to_array(in_poly, output, output.size());
 	n_poly = output.size();
 
+	//========================
+	for (int i = 0; i < n_poly; i++) {
+		for (int j = 0; j < n_input; j++) {
+			if (point_same(in_poly[i], input_poly[j])) {
+				points_to_convex_ind[i] = j;
+				break;
+			}
+		}
+	}
 	return P;
 }
 
 
 int main() {
 
-	Point* points = new Point[50];
+	Point* points = new Point[9];
 
 	// Sinh ngẫu nhiên giá trị x, y cho các phần tử trong mảng
 	default_random_engine generator(time(NULL));
 	uniform_real_distribution<double> distribution(-50.0, 50.0);
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 9; i++) {
 		points[i].x = distribution(generator);
 		points[i].y = distribution(generator);
 	}
-	int n_poly = 50;
-	vector<tuple<double, double>> result = OuterConvexApproximation(points, n_poly, 0);
+	int points_to_convex_ind[9] = { -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	int n_poly = 9;
+	vector<tuple<double, double>> result = OuterConvexApproximation_and_index(points, n_poly, points_to_convex_ind);
 	// In ra giá trị x, y của các phần tử trong mảng
 	cout << "======================================================" << endl;
-	cout << "tap hop cac diem point:" << endl;
-	for (int i = 0; i < 50; i++) {
-		cout << "[" << points[i].x << ", " << points[i].y<<"]" << endl;
-	}
+	//cout << "tap hop cac diem point:" << endl;
+	//for (int i = 0; i < 100; i++) {
+	//	cout << "[" << points[i].x << ", " << points[i].y << "]" << endl;
+	//}
 	cout << "====================================================" << endl;
 	cout << "bao loi tim duoc la:";
 	PrintVector(result);
 	// Giải phóng bộ nhớ
+	cout << "====================================================" << endl;
+
+	cout << "chi so cua cac diem convex so voi tap goc:" << endl;
+	for (int i = 0; i < 9; i++) cout << points_to_convex_ind[i] << " ";
 	delete[] points;
 
 	return 0;
