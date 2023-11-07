@@ -9,13 +9,184 @@
 #include <ctime>    // Để sử dụng hàm srand()
 #include <iostream>
 #include <random>
-
+//const double PI = 3.14159265358979323846;
+#define MAXN 100
+#define NMAX 512
+#define NMIN -9999
 using namespace std;
 struct Point {
 	double x, y;
 	Point() {}
 	Point(double x, double y) : x(x), y(y) {}
 };
+Point convert_double_to_point(double** matrix) {
+	// Khởi tạo điểm
+	Point point = { 0, 0 };
+
+	// Gán giá trị cho điểm
+	point.x = matrix[0][0];
+	point.y = matrix[1][0];
+
+	// Trả về điểm
+	return point;
+}
+double dot_product(double** matrix, Point point) {
+	// Khởi tạo tích vô hướng
+	double dot_product = 0;
+	dot_product += matrix[0][0] * point.x + matrix[0][1] * point.y;
+	return dot_product;
+}
+double get_max_value(double** mul_dp_xtranspose, int rows, int n_poly) {
+	// Khởi tạo giá trị max
+	double max_value = -DBL_MAX;
+	int max_index = -1;
+
+	// Lặp qua từng phần tử của mảng
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < n_poly; j++) {
+			// So sánh giá trị hiện tại với giá trị max
+			if (mul_dp_xtranspose[i][j] > max_value) {
+				max_value = mul_dp_xtranspose[i][j];
+			}
+		}
+	}
+
+	// Trả về giá trị max và vị trí của nó
+	return max_value;
+}
+
+double** transpose_dp(double** matrix) {
+	// Khởi tạo ma trận chuyển vị
+	double** transposed_matrix = new double* [1];
+	transposed_matrix[0] = new double[2];
+
+	// Gán giá trị cho ma trận chuyển vị
+	transposed_matrix[0][0] = matrix[0][0];
+	transposed_matrix[0][1] = matrix[1][0];
+
+	// Trả về ma trận chuyển vị
+	return transposed_matrix;
+}
+double** convert_point_to_matrix(Point* points, int n) {
+	// Khởi tạo ma trận 2 chiều
+	double** matrix = new double* [n];
+	for (int i = 0; i < n; i++) {
+		matrix[i] = new double[2];
+	}
+
+	// Lặp qua từng phần tử Point
+	for (int i = 0; i < n; i++) {
+		matrix[i][0] = points[i].x;
+		matrix[i][1] = points[i].y;
+	}
+
+	return matrix;
+}
+
+double** divide_matrix_by_double_and_return_new_matrix(double** matrix, int rows, int cols, double d) {
+	// Tạo mảng double** mới
+	double** new_matrix = new double* [rows];
+	for (int i = 0; i < rows; i++) {
+		new_matrix[i] = new double[cols];
+	}
+
+	// Chia từng phần tử của mảng
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			new_matrix[i][j] = matrix[i][j] / d;
+		}
+	}
+
+	// Trả về mảng double** mới
+	return new_matrix;
+}
+double norm_2(Point p) {
+	// Tính bình phương của từng phần tử của Point
+	double x2 = p.x * p.x;
+	double y2 = p.y * p.y;
+
+	// Trả về căn bậc hai của tổng bình phương
+	return sqrt(x2 + y2);
+}
+
+double** multiply_matrix(double** A, double** B, int m, int n, int p) {
+	// Khởi tạo ma trận kết quả
+	double** C = new double* [m];
+	for (int i = 0; i < m; i++) {
+		C[i] = new double[p];
+	}
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < p; j++) {
+			C[i][j] = 0;
+		}
+	}
+	//for (int i = 0; i < m; i++) {
+	//	for (int j = 0; j < p; j++) {
+	//		cout << C[i][j] << " ";
+	//	}
+	//	cout << endl;
+	//}
+	// Nhân hai ma trận
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < p; j++) {
+			for (int k = 0; k < n; k++) {
+				C[i][j] += A[i][k] * B[k][j];
+			}
+		}
+	}
+
+	return C;
+}
+Point subtract_points(Point p1, Point p2) {
+	// Hàm trừ 2 Point cho nhau
+
+	Point p3;
+	p3.x = p1.x - p2.x;
+	p3.y = p1.y - p2.y;
+
+	return p3;
+}
+double** convert_point_to_matrix(Point p) {
+	// Khởi tạo ma trận 2 hàng 1 cột
+
+	double** matrix = new double* [2];
+	matrix[0] = new double[1];
+	matrix[1] = new double[1];
+
+	// Gán giá trị cho ma trận
+	matrix[0][0] = p.x;
+	matrix[1][0] = p.y;
+
+	return matrix;
+}
+int find_point_index(Point* Ptest, Point pdoubt) {
+	// Hàm trả về chỉ số của Point trong mảng Pest
+
+	int index = -1;
+	for (int i = 0; i < NMAX; i++) {
+		if (Ptest[i].x == pdoubt.x && Ptest[i].y == pdoubt.y) {
+			index = i;
+			break;
+		}
+	}
+	if (index == -1) {
+		cout << "khong tim duoc chi so cua phan tu trong mang!" << endl;
+	}
+	return index;
+}
+
+int size_array_point(Point* D) {
+	// Hàm trả về số phần tử trong mảng có giá trị x, y đều khác -9999
+
+	int count = 0;
+	for (int i = 0; i < NMAX; i++) {
+		if (D[i].x != -9999 && D[i].y != -9999) {
+			count++;
+		}
+	}
+
+	return count;
+}
 void copy_vector_to_array(Point* dest, const vector<Point>& src, int size) {
 	for (int i = 0; i < size; i++) {
 		dest[i].x = src[i].x;
@@ -55,7 +226,7 @@ void PrintVector(vector<tuple<double, double>>& result) {
 	for (int i = 0; i < result.size(); i++) {
 		cout << "(" << get<0>(result[i]) << ", " << get<1>(result[i]) << ")";
 		if (i < result.size() - 1) {
-			cout << ", "<<endl;
+			cout << ", " << endl;
 		}
 	}
 	cout << "]" << endl;
@@ -402,24 +573,32 @@ tuple<double, double> subtract_tuples(const  tuple<double, double>& t1, const  t
 	return  make_tuple(result1, result2);
 }
 
-vector<tuple<double, double>> OuterConvexApproximation(Point* in_poly, int& n_poly, double δ = 0.0) {
+Point* OuterConvexApproximation(Point* in_poly, int& n_poly, double δ = 0.0) {
 	//khởi tạo mảng xoay R, các hàm sin cos ở dưới cũng dùng thư viện cmath
-	vector<vector<double>> R(2, vector<double>(2));
 	double alpha = -M_PI / 2;
-	// Gán giá trị cho vector
+	//khởi tạo R
+	double** R = new double* [2];
+	for (int i = 0; i < 2; i++) {
+		R[i] = new double[2];
+	}
 	R[0][0] = cos(alpha);
 	R[0][1] = sin(alpha);
 	R[1][0] = -sin(alpha);
 	R[1][1] = cos(alpha);
 
-
-	vector<tuple<double, double>> D;
-
-	D.emplace_back(1.0, 0.0);
-	D.emplace_back(0.0, 1.0);
-	D.emplace_back(-1.0, 0.0);
-	D.emplace_back(0.0, -1.0);
-
+	// Tạo một mảng các đối tượng Point
+	//nhớ dùng xong phải gán lại về bằng -999 hết
+	Point* D = new Point[NMAX];
+	for (int i = 0; i < NMAX; i++) {
+		D[i].x = NMIN;
+		D[i].y = NMIN;
+	}
+	D[0] = Point(1.0, 0.0);
+	D[1] = Point(0.0, 1.0);
+	D[2] = Point(-1.0, 0.0);
+	D[3] = Point(0.0, -1.0);
+	int D_size = 4;
+	
 
 	// Khởi tạo giá trị ban đầu
 	double min_x = DBL_MAX;
@@ -449,62 +628,91 @@ vector<tuple<double, double>> OuterConvexApproximation(Point* in_poly, int& n_po
 			max_y = in_poly[i].y;
 		}
 	}
-	tuple<double, double> r1 = { max_x, max_y };
-	tuple<double, double> r2 = { min_x, max_y };
-	tuple<double, double> r3 = { min_x, min_y };
-	tuple<double, double> r4 = { max_x, min_y };
 
-	vector<tuple<double, double>> P = { r1, r2, r3, r4 };
-	vector<tuple<double, double>> Pdoubt = P;
-	vector<tuple<double, double>> Ptest = P;
+	Point r1 = Point(max_x, max_y);
+	Point r2 = Point(min_x, max_y);
+	Point r3 = Point(min_x, min_y);
+	Point r4 = Point(max_x, min_y);
+
+	Point* P = new Point[NMAX];
+	for (int i = 0; i < NMAX; i++) {
+		P[i].x = NMIN;
+		P[i].y = NMIN;
+	}
+		P[0] = r1;
+		P[1] = r2;
+		P[2] = r3;
+		P[3] = r4;
+
+	Point* Pdoubt = P;
+	Point* Ptest = P;
 	int count = 0, count4 = 0, count1 = 0, count2 = 0, count3 = 0;
-	while (Pdoubt.size() > 0) {
+	while (size_array_point(Pdoubt) > 0) {
 		count += 1;
-		tuple<double, double> pdoubt = Pdoubt[0];
-		auto it = find(Ptest.begin(), Ptest.end(), pdoubt);
+		Point pdoubt = Pdoubt[0];
 		//lấy được chỉ số của pdoubt trong Ptest
-		int pdoubt_index_idx = it - Ptest.begin();
-		// Lấy chỉ số của mảng liền trước
-		int pdoubt_minus_index = (pdoubt_index_idx + Ptest.size() - 1) % Ptest.size();
+		int pdoubt_index_idx = find_point_index(Ptest, pdoubt);
+		
+		int pdoubt_minus_index = (pdoubt_index_idx + size_array_point(Ptest) - 1) % size_array_point(Ptest);
 
 		// Lấy chỉ số của mảng liền sau
-		int pdoubt_plus_index = (pdoubt_index_idx + 1) % Ptest.size();
+		int pdoubt_plus_index = (pdoubt_index_idx + 1) % size_array_point(Ptest);
 
 		// Lấy phần tử tại vị trí liền trước
-		tuple<double, double> pdoubt_minus = Ptest[pdoubt_minus_index];
+		Point pdoubt_minus = Ptest[pdoubt_minus_index];
 
 		// Lấy phần tử tại vị trí liền sau
-		tuple<double, double> pdoubt_plus = Ptest[pdoubt_plus_index];
-		//bắt đầu tính dp
-		tuple<double, double> result_sub_pminus_plus = subtract_tuples(pdoubt_minus, pdoubt_plus);
-		vector<tuple<double, double>> vector_result_sub_pminus_plus;
-		vector_result_sub_pminus_plus.push_back(result_sub_pminus_plus);
-		vector<vector<double>> transposed_matrix = transposeTupleVector(vector_result_sub_pminus_plus);
-		//vector transpose này là mảng 1 chiều có kiểu là (a, b), đem nhân với ma trận R có chiều (c,d)
-		 //                                                                                         (e,f)
-		 //cần đổi R sang kiểu vector 2 chiều vector<vector<double>>
-		std::vector<std::vector<double>> result_mul_matrix = multiplyMatrices(R, transposed_matrix);
-		double norm_sub_pminus_pplus = norm(result_sub_pminus_plus);
-		std::vector<std::vector<double>> dp = divide_matrix(result_mul_matrix, norm_sub_pminus_pplus);
-		//chuyển in_poly về vector X cho dễ tính
-		vector<tuple<double, double>> n_poly_vector = GetEnoughPoints(in_poly, n_poly);
-		
-		vector<vector<double>> X_transpose = transposeTupleVector(n_poly_vector);
-		//dp đang là ma trận 2x1, vậy nếu muốn nhân với ma trận có kích thước 2x50 thì phải chuyển vị ma trận dp đi
-		vector<vector<double>> dp_transpose = transpose(dp);
-		vector<vector<double>> mul_dp_xtranspose = multiplyMatrices(dp_transpose, X_transpose);
-		double βdp = getMax(mul_dp_xtranspose);
+		Point pdoubt_plus = Ptest[pdoubt_plus_index];
 
-		//convert pdoubt_plus sang vector<vector<double>>  để có thể tái sử dụng hàm nhân ma trận
-		vector<vector<double>>  pdoubt_plus_vector = convertTupleToMatrix(pdoubt_plus);
+		//bắt đầu tính dp
+		Point result_sub_pminus_plus = subtract_points(pdoubt_minus, pdoubt_plus);
+		//Point vector_result_sub_pminus_plus = new Point[1];
+		//vector_result_sub_pminus_plus[0] = result_sub_pminus_plus;
+
+		//vector<vector<double>> transposed_matrix = transposeTupleVector(vector_result_sub_pminus_plus);
+		//chuyển đổi thành ma trận cột 2x1, viết hàm chuyển đổi Point thành ma trận cột 
+		// Chuyển đổi Point p thành ma trận 2 hàng 1 cột
+		double** transposed_matrix = convert_point_to_matrix(result_sub_pminus_plus);
+		//thực hiện nhân ma trận chuyển vị trên với R
+		double** result_mul_matrix = multiply_matrix(R, transposed_matrix, 2, 2, 1);
+
+		//std::vector<std::vector<double>> result_mul_matrix = multiplyMatrices(R, transposed_matrix);
+		//tính chuẩn norm 2 của kết quả này
+		double norm_sub_pminus_pplus = norm_2(result_sub_pminus_plus);
+		//dp ở đây có kích thước 2x1, là ma trận cột 
+		double** dp = divide_matrix_by_double_and_return_new_matrix(result_mul_matrix, 2, 1, norm_sub_pminus_pplus);
+
+
+		//chuyển in_poly về vector X cho dễ tính
+		//vector<tuple<double, double>> n_poly_vector = GetEnoughPoints(in_poly, n_poly);
+		//=================làm tiếp ở đây=====================
+		double** X_transpose = convert_point_to_matrix(in_poly, n_poly);
+
+		//vector<vector<double>> X_transpose = transposeTupleVector(n_poly_vector);
+		//dp đang là ma trận 2x1, vậy nếu muốn nhân với ma trận có kích thước 2x50 thì phải chuyển vị ma trận dp đi
+		
+		double** dp_transpose = transpose_dp(dp);
+
+		
+		//vector<vector<double>> mul_dp_xtranspose = multiplyMatrices(dp_transpose, X_transpose);
+		double** mul_dp_xtranspose = multiply_matrix(dp_transpose, X_transpose, 1, 2, n_poly);
+		double βdp = get_max_value(mul_dp_xtranspose,1,n_poly);
+
+		////convert pdoubt_plus sang vector<vector<double>>  để có thể tái sử dụng hàm nhân ma trận
+		//vector<vector<double>>  pdoubt_plus_vector = convertTupleToMatrix(pdoubt_plus);
 
 		//cần tính tích vô hướng trong điều kiện dưới
-		if (βdp == dotProduct(dp_transpose, pdoubt_plus_vector)) {
+		if (βdp == dot_product(dp_transpose, pdoubt_plus)) {
 			count1 += 1;
 			//convert dp to tuple để thêm vào tập D
-			vector<vector<double>> dp_transpose = transpose(dp);
-			tuple<double, double> dp_tuple = convertMatrixToTuple(dp_transpose);
-			D.push_back(dp_tuple);
+			/*vector<vector<double>> dp_transpose = transpose(dp);
+			tuple<double, double> dp_tuple = convertMatrixToTuple(dp_transpose);*/
+
+			//chuyển đổi dp_transpose về kiểu Point để nạp vào tập D
+			Point dp_transpose_point = convert_double_to_point(dp_transpose);
+			D[D_size] = dp_transpose_point;
+			D_size++;
+
 			P = deleteTuple(P, pdoubt);
 			Pdoubt = deleteTuple(Pdoubt, pdoubt);
 			Ptest = deleteTuple(Ptest, pdoubt);
@@ -591,7 +799,7 @@ int main() {
 	cout << "======================================================" << endl;
 	cout << "tap hop cac diem point:" << endl;
 	for (int i = 0; i < 50; i++) {
-		cout << "[" << points[i].x << ", " << points[i].y<<"]" << endl;
+		cout << "[" << points[i].x << ", " << points[i].y << "]" << endl;
 	}
 	cout << "====================================================" << endl;
 	cout << "bao loi tim duoc la:";
