@@ -514,7 +514,7 @@ Point *OuterConvexApproximation_and_index(Point *in_poly, int &n_poly, int *poin
         }
     }
 
-//khởi tạo P
+    //khởi tạo P
     Point *P = new Point[NMAX];
     for (int i = 0; i < NMAX; i++) {
         P[i].x = NMIN;
@@ -526,7 +526,7 @@ Point *OuterConvexApproximation_and_index(Point *in_poly, int &n_poly, int *poin
     P[3] = Point(max_x, min_y);
     int size_P = 4;
 
-//khởi tạo Pdoubt
+    //khởi tạo Pdoubt
     Point *Pdoubt = new Point[NMAX];
     for (int i = 0; i < NMAX; i++) {
         Pdoubt[i].x = NMIN;
@@ -538,7 +538,7 @@ Point *OuterConvexApproximation_and_index(Point *in_poly, int &n_poly, int *poin
     Pdoubt[3] = Point(max_x, min_y);
     int size_Pdoubt = 4;
 
-//khởi tạo Ptest
+    //khởi tạo Ptest
     Point *Ptest = new Point[NMAX];
     for (int i = 0; i < NMAX; i++) {
         Ptest[i].x = NMIN;
@@ -617,9 +617,9 @@ Point *OuterConvexApproximation_and_index(Point *in_poly, int &n_poly, int *poin
             double **A = multiply_matrix_with_double(pdoubt_minus_convert_to_matrix, 1, 2, (1 - λp));
             double **B = multiply_matrix_with_double(pdoubt_convert_to_matrix, 1, 2, λp);
             double **p_hat_minus = add_two_matrix(A, B, 1, 2);
-//            double **p_hat_minus = add_two_matrix(
-//                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt_minus), 1, 2, (1 - λp)),
-//                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt), 1, 2, λp), 1, 2);
+            //            double **p_hat_minus = add_two_matrix(
+            //                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt_minus), 1, 2, (1 - λp)),
+            //                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt), 1, 2, λp), 1, 2);
 
             //1x2
 
@@ -627,9 +627,9 @@ Point *OuterConvexApproximation_and_index(Point *in_poly, int &n_poly, int *poin
             double **pdoubt_plus_convert_to_matrix = convert_point_to_row_matrix(pdoubt_plus);
             double **C = multiply_matrix_with_double(pdoubt_plus_convert_to_matrix, 1, 2, (1 - λp));
             double **p_hat_plus = add_two_matrix(C, B, 1, 2);
-//            double **p_hat_plus = add_two_matrix(
-//                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt_plus), 1, 2, (1 - λp)),
-//                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt), 1, 2, λp), 1, 2);
+            //            double **p_hat_plus = add_two_matrix(
+            //                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt_plus), 1, 2, (1 - λp)),
+            //                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt), 1, 2, λp), 1, 2);
             Point dp_transpose_point = convert_double_to_point(dp_transpose);
             D[D_size] = dp_transpose_point;
             D_size++;
@@ -669,29 +669,12 @@ Point *OuterConvexApproximation_and_index(Point *in_poly, int &n_poly, int *poin
 
             }
             for (int i = 0; i < 2; i++) delete p_hat_plus[i];
-            delete[] p_hat_plus;
             for (int i = 0; i < 2; i++) delete p_hat_minus[i];
-            delete[] p_hat_minus;
-            for (int i = 0; i < 2; ++i) {
-                delete pdoubt_minus_convert_to_matrix[i];
-            }
             delete[] pdoubt_minus_convert_to_matrix;
-
-            for (int i = 0; i < 2; ++i) {
-                delete pdoubt_plus_convert_to_matrix[i];
-            }
             delete[] pdoubt_plus_convert_to_matrix;
-
-            for (int i = 0; i < 2; i++) delete pdoubt_convert_to_matrix[i];
             delete[] pdoubt_convert_to_matrix;
-
-            for (int i = 0; i < 2; i++) delete A[i];
             delete[] A;
-            for (int i = 0; i < 2; i++) delete B[i];
-
             delete[] B;
-
-            for (int i = 0; i < 2; i++) delete C[i];
             delete[] C;
         } else {
             count3++;
@@ -762,47 +745,47 @@ int main() {
     points[6] = {2.69288, 15.3919};
     points[7] = {20.1191, 26.2198};
     points[8] = {-45.2535, -17.1766};
-//    points[9] = {25.641, -13.4661};
-//    points[10] = {48.255, 25.3356};
-//    points[11] = {-42.7314, 38.4707};
-//    points[12] = {-6.35886, -2.22682};
-//    points[13] = {-22.5093, -33.3493};
-//    points[14] = {39.7656, -43.9436};
-//    points[15] = {0.452289, -18.0967};
-//    points[16] = {-0.602331, -40.9267};
-//    points[17] = {-42.6251, -11.5858};
-//    points[18] = {41.3817, -3.55542};
-//    points[19] = {-44.9916, 27.0205};
-//    points[20] = {-37.4635, 18.8455};
-//    points[21] = {12.9543, 22.5412};
-//    points[22] = {38.8572, -19.3678};
-//    points[23] = {1.32737, 34.5982};
-//    points[24] = {34.1511, -8.46054};
-//    points[25] = {-3.20826, -32.1672};
-//    points[26] = {7.16548, -46.6946};
-//    points[27] = {-0.151988, 24.8293};
-//    points[28] = {39.0737, 34.204};
-//    points[29] = {-28.7248, -36.9573};
-//    points[30] = {-22.5412, -8.57067};
-//    points[31] = {20.982, -26.0089};
-//    points[32] = {-18.246, 15.2059};
-//    points[33] = {18.1346, -11.2275};
-//    points[34] = {-35.2467, 34.5576};
-//    points[35] = {45.5409, -35.1848};
-//    points[36] = {-9.12333, 6.48987};
-//    points[37] = {-1.14855, 46.1095};
-//    points[38] = {-30.0243, 12.9269};
-//    points[39] = {15.1254, 30.3073};
-//    points[40] = {-2.35682, -29.675};
-//    points[41] = {40.1673, -35.7979};
-//    points[42] = {-8.9687, 38.5648};
-//    points[43] = {-33.7801, -13.4661};
-//    points[44] = {-36.4891, -4.46927};
-//    points[45] = {-4.76998, 43.1674};
-//    points[46] = {-28.4752, 40.8922};
-//    points[47] = {36.086, 0.595588};
-//    points[48] = {31.7561, -3.7755};
-//    points[49] = {13.2739, 32.4697};
+    //    points[9] = {25.641, -13.4661};
+    //    points[10] = {48.255, 25.3356};
+    //    points[11] = {-42.7314, 38.4707};
+    //    points[12] = {-6.35886, -2.22682};
+    //    points[13] = {-22.5093, -33.3493};
+    //    points[14] = {39.7656, -43.9436};
+    //    points[15] = {0.452289, -18.0967};
+    //    points[16] = {-0.602331, -40.9267};
+    //    points[17] = {-42.6251, -11.5858};
+    //    points[18] = {41.3817, -3.55542};
+    //    points[19] = {-44.9916, 27.0205};
+    //    points[20] = {-37.4635, 18.8455};
+    //    points[21] = {12.9543, 22.5412};
+    //    points[22] = {38.8572, -19.3678};
+    //    points[23] = {1.32737, 34.5982};
+    //    points[24] = {34.1511, -8.46054};
+    //    points[25] = {-3.20826, -32.1672};
+    //    points[26] = {7.16548, -46.6946};
+    //    points[27] = {-0.151988, 24.8293};
+    //    points[28] = {39.0737, 34.204};
+    //    points[29] = {-28.7248, -36.9573};
+    //    points[30] = {-22.5412, -8.57067};
+    //    points[31] = {20.982, -26.0089};
+    //    points[32] = {-18.246, 15.2059};
+    //    points[33] = {18.1346, -11.2275};
+    //    points[34] = {-35.2467, 34.5576};
+    //    points[35] = {45.5409, -35.1848};
+    //    points[36] = {-9.12333, 6.48987};
+    //    points[37] = {-1.14855, 46.1095};
+    //    points[38] = {-30.0243, 12.9269};
+    //    points[39] = {15.1254, 30.3073};
+    //    points[40] = {-2.35682, -29.675};
+    //    points[41] = {40.1673, -35.7979};
+    //    points[42] = {-8.9687, 38.5648};
+    //    points[43] = {-33.7801, -13.4661};
+    //    points[44] = {-36.4891, -4.46927};
+    //    points[45] = {-4.76998, 43.1674};
+    //    points[46] = {-28.4752, 40.8922};
+    //    points[47] = {36.086, 0.595588};
+    //    points[48] = {31.7561, -3.7755};
+    //    points[49] = {13.2739, 32.4697};
 
 
     int n_poly = 9;

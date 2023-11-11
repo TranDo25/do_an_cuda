@@ -199,7 +199,7 @@ double **multiply_matrix_with_double(double **matrix, int n, int m, double scala
 }
 
 //xoá Point trong Point*
-void deletePoint(Point *arr, int& n, Point p) {
+void deletePoint(Point *arr, int &n, Point p) {
     // Tìm vị trí của Point cần xoá
     int index = 0;
     for (int i = 0; i < n; i++) {
@@ -430,12 +430,13 @@ int find_point_index(Point *Ptest, Point pdoubt) {
 }
 
 
-
 Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
-    const double δ = 0.0;
+    //global
+    double δ = 0.0;
     //khởi tạo mảng xoay R, các hàm sin cos ở dưới cũng dùng thư viện cmath
     double alpha = -M_PI / 2;
     //khởi tạo R
+    //đã free
     double **R = new double *[2];
     for (int i = 0; i < 2; i++) {
         R[i] = new double[2];
@@ -488,7 +489,7 @@ Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
         }
     }
 
-//khởi tạo P
+    //khởi tạo P
     Point *P = new Point[NMAX];
     for (int i = 0; i < NMAX; i++) {
         P[i].x = NMIN;
@@ -500,7 +501,7 @@ Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
     P[3] = Point(max_x, min_y);
     int size_P = 4;
 
-//khởi tạo Pdoubt
+    //khởi tạo Pdoubt
     Point *Pdoubt = new Point[NMAX];
     for (int i = 0; i < NMAX; i++) {
         Pdoubt[i].x = NMIN;
@@ -512,7 +513,7 @@ Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
     Pdoubt[3] = Point(max_x, min_y);
     int size_Pdoubt = 4;
 
-//khởi tạo Ptest
+    //khởi tạo Ptest
     Point *Ptest = new Point[NMAX];
     for (int i = 0; i < NMAX; i++) {
         Ptest[i].x = NMIN;
@@ -531,6 +532,7 @@ Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
 
     while (size_Pdoubt > 0) {
         count += 1;
+        //không được giải phóng pdoubt vì sẽ làm mất Pdoubt
         Point pdoubt = Pdoubt[0];
         //lấy được chỉ số của pdoubt trong Ptest
         int pdoubt_index_idx = find_point_index(Ptest, pdoubt);
@@ -584,14 +586,25 @@ Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
                         / (dot_product(dp_transpose, pdoubt) - dot_product(dp_transpose, pdoubt_minus));
             //1x2 nhưng thực tế cần 2x1
             //đây thực chất là 1x2 nhưng trên danh nghĩa là 2x1
-            double **p_hat_minus = add_two_matrix(
-                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt_minus), 1, 2, (1 - λp)),
-                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt), 1, 2, λp), 1, 2);
+
+            double **pdoubt_minus_convert_to_matrix = convert_point_to_row_matrix(pdoubt_minus);
+            double **pdoubt_convert_to_matrix = convert_point_to_row_matrix(pdoubt);
+            double **A = multiply_matrix_with_double(pdoubt_minus_convert_to_matrix, 1, 2, (1 - λp));
+            double **B = multiply_matrix_with_double(pdoubt_convert_to_matrix, 1, 2, λp);
+            double **p_hat_minus = add_two_matrix(A, B, 1, 2);
+            //            double **p_hat_minus = add_two_matrix(
+            //                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt_minus), 1, 2, (1 - λp)),
+            //                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt), 1, 2, λp), 1, 2);
 
             //1x2
-            double **p_hat_plus = add_two_matrix(
-                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt_plus), 1, 2, (1 - λp)),
-                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt), 1, 2, λp), 1, 2);
+
+
+            double **pdoubt_plus_convert_to_matrix = convert_point_to_row_matrix(pdoubt_plus);
+            double **C = multiply_matrix_with_double(pdoubt_plus_convert_to_matrix, 1, 2, (1 - λp));
+            double **p_hat_plus = add_two_matrix(C, B, 1, 2);
+            //            double **p_hat_plus = add_two_matrix(
+            //                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt_plus), 1, 2, (1 - λp)),
+            //                    multiply_matrix_with_double(convert_point_to_row_matrix(pdoubt), 1, 2, λp), 1, 2);
             Point dp_transpose_point = convert_double_to_point(dp_transpose);
             D[D_size] = dp_transpose_point;
             D_size++;
@@ -613,7 +626,7 @@ Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
                 delete_point_by_index(Ptest, size_Ptest, ptest_index);
 
                 if (allclose(convert_double_to_point(p_hat_plus), pdoubt_plus)) {
-                    cout << "1" << endl;
+                    //cout << "1" << endl;
                 } else {
                     Point tmp = convert_double_to_point(p_hat_plus);
                     insert_point_to_index(P, size_P, pdoubt_indexp, convert_double_to_point(p_hat_plus));
@@ -621,7 +634,7 @@ Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
                     insert_point_to_index(Ptest, size_Ptest, ptest_index, convert_double_to_point(p_hat_plus));
                 }
                 if (allclose(convert_double_to_point(p_hat_minus), pdoubt_minus)) {
-                    cout << "2" << endl;
+                    //cout << "2" << endl;
                 } else {
                     insert_point_to_index(P, size_P, pdoubt_indexp, convert_double_to_point(p_hat_minus));
                     insert_point_to_index(Pdoubt, size_Pdoubt, pdoubt_index, convert_double_to_point(p_hat_minus));
@@ -630,6 +643,14 @@ Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
                 }
 
             }
+            for (int i = 0; i < 2; i++) delete p_hat_plus[i];
+            for (int i = 0; i < 2; i++) delete p_hat_minus[i];
+            delete[] pdoubt_minus_convert_to_matrix;
+            delete[] pdoubt_plus_convert_to_matrix;
+            delete[] pdoubt_convert_to_matrix;
+            delete[] A;
+            delete[] B;
+            delete[] C;
         } else {
             count3++;
             delete_point(Pdoubt, size_Pdoubt, pdoubt);
@@ -637,11 +658,34 @@ Point *OuterConvexApproximation(Point *in_poly, int &n_poly) {
             int first_index = ptest_index[0];
             move_point_to_end(Ptest, size_Ptest, first_index);
         }
+        delete transposed_matrix[0];
+        delete transposed_matrix[1];
+        delete[] transposed_matrix;
 
+        delete result_mul_matrix[0];
+        delete result_mul_matrix[1];
+        delete[] result_mul_matrix;
+
+        delete dp[0];
+        delete dp[1];
+        delete[] dp;
+        for (int i = 0; i < n_poly; i++) {
+            delete X[i];
+        }
+        delete[] X;
+
+        delete X_transpose[0];
+        delete X_transpose[1];
+        delete[] X_transpose;
+
+        delete dp_transpose[0];
+        delete[] dp_transpose;
+
+        delete mul_dp_xtranspose[0];
+        delete[] mul_dp_xtranspose;
     }
 
     copy_points(P, in_poly, size_P, n_poly);
-
     //cần phải giải phóng hết bộ nhớ đi
     for (int i = 0; i < 2; i++) {
         delete[] R[i];
