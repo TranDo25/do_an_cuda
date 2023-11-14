@@ -520,7 +520,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 	}
 
 	//khởi tạo P
-	Point* P = new Point[NMAX];
+	Point P[NMAX];
 	for (int i = 0; i < NMAX; i++) {
 		P[i].x = NMIN;
 		P[i].y = NMIN;
@@ -529,10 +529,12 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 	P[1] = Point(min_x, max_y);
 	P[2] = Point(min_x, min_y);
 	P[3] = Point(max_x, min_y);
+
 	int size_P = 4;
 
+
 	//khởi tạo Pdoubt
-	Point* Pdoubt = new Point[NMAX];
+	Point Pdoubt[NMAX];
 	for (int i = 0; i < NMAX; i++) {
 		Pdoubt[i].x = NMIN;
 		Pdoubt[i].y = NMIN;
@@ -544,7 +546,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 	int size_Pdoubt = 4;
 
 	//khởi tạo Ptest
-	Point* Ptest = new Point[NMAX];
+	Point Ptest[NMAX];
 	for (int i = 0; i < NMAX; i++) {
 		Ptest[i].x = NMIN;
 		Ptest[i].y = NMIN;
@@ -554,8 +556,8 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 	Ptest[2] = Point(min_x, min_y);
 	Ptest[3] = Point(max_x, min_y);
 
-
 	int size_Ptest = 4;
+
 
 	int count = 0, count4 = 0, count1 = 0, count2 = 0, count3 = 0;
 
