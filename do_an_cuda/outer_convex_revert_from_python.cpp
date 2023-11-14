@@ -294,7 +294,6 @@ double dot_product(double matrix[1][2], Point point) {
 double get_max_value(double mul_dp_xtranspose[1][50], int rows, int n_poly) {
 	// Khởi tạo giá trị max
 	double max_value = -DBL_MAX;
-	int max_index = -1;
 
 	// Lặp qua từng phần tử của mảng
 	for (int i = 0; i < rows; i++) {
@@ -704,7 +703,7 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 		else {
 			count3++;
 			delete_point(Pdoubt, size_Pdoubt, pdoubt);
-			int ptest_index[size_Ptest];
+			int ptest_index[NMAX];
             find_all_point(Ptest, size_Ptest, pdoubt, ptest_index);
 			int first_index = ptest_index[0];
 			move_point_to_end(Ptest, size_Ptest, first_index);
