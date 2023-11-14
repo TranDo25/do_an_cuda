@@ -515,40 +515,41 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 	}
 
 	//khởi tạo P
-	Point* P = new Point[NMAX];
+	Point P[NMAX];
 	for (int i = 0; i < NMAX; i++) {
 		P[i].x = NMIN;
 		P[i].y = NMIN;
 	}
-	P[0] = Point(max_x, max_y);
-	P[1] = Point(min_x, max_y);
-	P[2] = Point(min_x, min_y);
-	P[3] = Point(max_x, min_y);
+	P[0] = Point( max_x, max_y );
+	P[1] = Point( min_x, max_y );
+	P[2] = Point( min_x, min_y );
+	P[3] = Point( max_x, min_y );
+
 	int size_P = 4;
 
+
 	//khởi tạo Pdoubt
-	Point* Pdoubt = new Point[NMAX];
+	Point Pdoubt[NMAX];
 	for (int i = 0; i < NMAX; i++) {
 		Pdoubt[i].x = NMIN;
 		Pdoubt[i].y = NMIN;
 	}
-	Pdoubt[0] = Point(max_x, max_y);
-	Pdoubt[1] = Point(min_x, max_y);
-	Pdoubt[2] = Point(min_x, min_y);
-	Pdoubt[3] = Point(max_x, min_y);
+	Pdoubt[0] = Point( max_x, max_y );
+	Pdoubt[1] = Point( min_x, max_y );
+	Pdoubt[2] = Point( min_x, min_y );
+	Pdoubt[3] = Point( max_x, min_y );
 	int size_Pdoubt = 4;
 
 	//khởi tạo Ptest
-	Point* Ptest = new Point[NMAX];
+	Point Ptest[NMAX];
 	for (int i = 0; i < NMAX; i++) {
 		Ptest[i].x = NMIN;
 		Ptest[i].y = NMIN;
 	}
-	Ptest[0] = Point(max_x, max_y);
-	Ptest[1] = Point(min_x, max_y);
-	Ptest[2] = Point(min_x, min_y);
-	Ptest[3] = Point(max_x, min_y);
-
+	Ptest[0] = Point( max_x, max_y );
+	Ptest[1] = Point( min_x, max_y );
+	Ptest[2] = Point( min_x, min_y );
+	Ptest[3] = Point( max_x, min_y );
 
 	int size_Ptest = 4;
 
@@ -674,7 +675,7 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 				delete_point_by_index(P, size_P, pdoubt_indexp);
 				int ptest_index = find_point_index(Ptest, pdoubt);
 				delete_point_by_index(Ptest, size_Ptest, ptest_index);
-				Point p_hat_plus_point = { 0,0 };
+				Point p_hat_plus_point(0, 0);
 				convert_double_to_point(p_hat_plus, p_hat_plus_point);
 				if (allclose(p_hat_plus_point, pdoubt_plus)) {
 					//cout << "1" << endl;
