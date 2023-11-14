@@ -1,11 +1,13 @@
-﻿#define _USE_MATH_DEFINES
-
-#include <iostream>
-
-
+﻿#include<iostream>
 #define NMAX 512
 #define NMIN -999999
-using namespace std;
+#define DBL_MAX 1.7976931348623158e+308
+
+
+
+const double EPS = 1E-8;
+
+const double M_PI = 3.14159265358979323846;
 
 struct Point {
 	double x, y;
@@ -14,6 +16,74 @@ struct Point {
 
 	Point(double x, double y) : x(x), y(y) {}
 };
+//=================================================================
+// 
+// // Hàm tính giai thừa
+double factorial(int n) {
+	if (n == 0 || n == 1) {
+		return 1;
+	}
+	else {
+		return n * factorial(n - 1);
+	}
+}
+// Hàm tính lũy thừa
+double power(double base, int exponent) {
+	double result = 1.0;
+	for (int i = 0; i < exponent; ++i) {
+		result *= base;
+	}
+	return result;
+}
+// Hàm tính sin bằng phương pháp Taylor
+double sin(double x) {
+	int terms = 10;
+	double result = 0.0;
+	for (int n = 0; n < terms; ++n) {
+		// Sử dụng công thức Taylor để tính sin
+		result += power(-1, n) * power(x, 2 * n + 1) / factorial(2 * n + 1);
+	}
+	return result;
+}
+double sqrt(double x) {
+	if (x < 0) {
+		return -1;
+	}
+
+	double guess = x / 2;
+	double previous_guess = 0;
+
+	while (guess != previous_guess) {
+		previous_guess = guess;
+		guess = (guess + x / guess) / 2;
+	}
+
+	return guess;
+}
+// Hàm tính cos bằng phương pháp Taylor, sử dụng hàm mySin
+double cos(double x) {
+	int terms = 10;
+	// Sử dụng công thức cos(x) = sqrt(1 - sin^2(x))
+	return sqrt(1 - sin(x) * sin(x));
+}
+
+double fmax(double x, double y) {
+	if (x > y) {
+		return x;
+	}
+	else {
+		return y;
+	}
+}
+double fabs(double x) {
+	if (x >= 0) {
+		return x;
+	}
+	else {
+		return -x;
+	}
+}
+
 
 //copy phần tử của mảng này chuyển sang mảng khác
 void copy_points(Point* src, Point* dst, int& n_src, int& n_dst) {
@@ -707,21 +777,21 @@ int main() {
 
 
 	int n_poly = 50;
-	cout << "======================================================" << endl;
-	cout << "tap hop cac diem point:" << endl;
+	std::cout << "======================================================" << std::endl;
+	std::cout << "tap hop cac diem point:" << std::endl;
 	for (int i = 0; i < n_poly; i++) {
-		cout << "[" << points[i].x << ", " << points[i].y << "]" << endl;
+		std::cout << "[" << points[i].x << ", " << points[i].y << "]" << std::endl;
 	}
-	cout << "====================================================" << endl;
+	std::cout << "====================================================" << std::endl;
 
 	Point* result = OuterConvexApproximation(points, n_poly);
 	// In ra giá trị x, y của các phần tử trong mảng
-	cout << "======================================================" << endl;
-	cout << "tap hop bao loi:" << n_poly << " diem" << endl;
+	std::cout << "======================================================" << std::endl;
+	std::cout << "tap hop bao loi:" << n_poly << " diem" << std::endl;
 	for (int i = 0; i < n_poly; i++) {
-		cout << "[" << result[i].x << ", " << result[i].y << "]" << endl;
+		std::cout << "[" << result[i].x << ", " << result[i].y << "]" << std::endl;
 	}
-	cout << "====================================================" << endl;
+	std::cout << "====================================================" << std::endl;
 
 	// Giải phóng bộ nhớ
 	delete[] points;
