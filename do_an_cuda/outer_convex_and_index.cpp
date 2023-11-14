@@ -104,28 +104,24 @@ void copy_points(Point* src, Point* dst, int& n_src, int& n_dst) {
 	n_dst = n_src;
 }
 
-//tìm tất cả các index của Point trong Point*
-int* find_all_point(Point* P, int n, Point p) {
-	// Khởi tạo mảng kết quả
-	int* result = new int[n];
-	for (int i = 0; i < n; i++) {
-		result[i] = NMIN;
-	}
+void find_all_point(Point* P, int n, Point p, int result[]) {
+    // Khởi tạo mảng kết quả
 
-	// Khởi tạo biến đếm
-	int count = 0;
+    for (int i = 0; i < n; i++) {
+        result[i] = NMIN;
+    }
 
-	// Duyệt qua mảng P
-	for (int i = 0; i < n; i++) {
-		// Nếu phần tử P[i] khớp với phần tử cần tìm
-		if (P[i].x == p.x && P[i].y == p.y) {
-			// Thêm chỉ số của phần tử P[i] vào mảng kết quả
-			result[count++] = i;
-		}
-	}
+    // Khởi tạo biến đếm
+    int count = 0;
 
-	// Trả về mảng kết quả
-	return result;
+    // Duyệt qua mảng P
+    for (int i = 0; i < n; i++) {
+        // Nếu phần tử P[i] khớp với phần tử cần tìm
+        if (P[i].x == p.x && P[i].y == p.y) {
+            // Thêm chỉ số của phần tử P[i] vào mảng kết quả
+            result[count++] = i;
+        }
+    }
 }
 
 //chèn Point vào Point* theo index
@@ -464,7 +460,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 		input_poly[i].y = in_poly[i].y;
 	}
 	//global
-	double δ = 0.0;
+	double lambda_p = 0.0;
 	//khởi tạo mảng xoay R, các hàm sin cos ở dưới cũng dùng thư viện cmath
 	double alpha = -M_PI / 2;
 	//khởi tạo R
@@ -609,10 +605,10 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 		multiply_matrix(dp_transpose, X_transpose, mul_dp_xtranspose, 1, 2, n_poly);
 
 		//tính Bdp
-		double βdp = get_max_value(mul_dp_xtranspose, 1, n_poly);
+		double beta_dp = get_max_value(mul_dp_xtranspose, 1, n_poly);
 
 		//cần tính tích vô hướng trong điều kiện dưới
-		if (βdp == dot_product(dp_transpose, pdoubt_plus)) {
+		if (beta_dp == dot_product(dp_transpose, pdoubt_plus)) {
 			count1 += 1;
 			//chuyển đổi dp_transpose về kiểu Point để nạp vào tập D
 			Point dp_transpose_point = { 0,0 };
@@ -626,10 +622,10 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 		}
 		//chuyển đổi pdoubt sang dạng vector<double<double>>
 
-		else if (dot_product(dp_transpose, pdoubt) - βdp > δ) {
+		else if (dot_product(dp_transpose, pdoubt) - beta_dp > lambda_p) {
 			count2++;
-			//tính λp
-			double λp = (βdp - dot_product(dp_transpose, pdoubt_minus))
+			//tính lambda_p
+			double lambda_p = (beta_dp - dot_product(dp_transpose, pdoubt_minus))
 				/ (dot_product(dp_transpose, pdoubt) - dot_product(dp_transpose, pdoubt_minus));
 			//1x2 nhưng thực tế cần 2x1
 			//đây thực chất là 1x2 nhưng trên danh nghĩa là 2x1
@@ -641,10 +637,10 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 			convert_point_to_row_matrix(pdoubt, pdoubt_convert_to_matrix);
 
 			double A[1][2];
-			multiply_matrix_with_double(pdoubt_minus_convert_to_matrix, 1, 2, (1 - λp), A);
+			multiply_matrix_with_double(pdoubt_minus_convert_to_matrix, 1, 2, (1 - lambda_p), A);
 
 			double B[1][2];
-			multiply_matrix_with_double(pdoubt_convert_to_matrix, 1, 2, λp, B);
+			multiply_matrix_with_double(pdoubt_convert_to_matrix, 1, 2, lambda_p, B);
 
 			double p_hat_minus[1][2];
 			add_two_matrix(A, B, 1, 2, p_hat_minus);
@@ -653,7 +649,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 			convert_point_to_row_matrix(pdoubt_plus, pdoubt_plus_convert_to_matrix);
 
 			double C[1][2];
-			multiply_matrix_with_double(pdoubt_plus_convert_to_matrix, 1, 2, (1 - λp), C);
+			multiply_matrix_with_double(pdoubt_plus_convert_to_matrix, 1, 2, (1 - lambda_p), C);
 
 			double p_hat_plus[1][2];
 			add_two_matrix(C, B, 1, 2, p_hat_plus);
@@ -712,10 +708,11 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 		}
 		else {
 			count3++;
-			delete_point(Pdoubt, size_Pdoubt, pdoubt);
-			int* ptest_index = find_all_point(Ptest, size_Ptest, pdoubt);
-			int first_index = ptest_index[0];
-			move_point_to_end(Ptest, size_Ptest, first_index);
+            delete_point(Pdoubt, size_Pdoubt, pdoubt);
+            int ptest_index[size_Ptest];
+            find_all_point(Ptest, size_Ptest, pdoubt, ptest_index);
+            int first_index = ptest_index[0];
+            move_point_to_end(Ptest, size_Ptest, first_index);
 		}
 
 	}
