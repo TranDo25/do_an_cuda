@@ -67,7 +67,7 @@ double cos(double x) {
 	return sqrt(1 - sin(x) * sin(x));
 }
 
-double fmax(double x, double y) {
+double f_max(double x, double y) {
 	if (x > y) {
 		return x;
 	}
@@ -177,10 +177,10 @@ void move_point_to_end(Point* P, int n, int index) {
 //kiểm tra allclose của 2 Point
 bool allclose(const Point& p1, const Point& p2, double rtol = 1e-5, double atol = 1e-8) {
 	// Tính độ lệch tương đối giữa hai phần tử x
-	double rel_diff_x = fabs(p1.x - p2.x) / (atol + rtol * fmax(fabs(p1.x), fabs(p2.x)));
+	double rel_diff_x = fabs(p1.x - p2.x) / (atol + rtol * f_max(fabs(p1.x), fabs(p2.x)));
 
 	// Tính độ lệch tương đối giữa hai phần tử y
-	double rel_diff_y = fabs(p1.y - p2.y) / (atol + rtol * fmax(fabs(p1.y), fabs(p2.y)));
+	double rel_diff_y = fabs(p1.y - p2.y) / (atol + rtol * f_max(fabs(p1.y), fabs(p2.y)));
 
 	// Kiểm tra xem cả hai độ lệch tương đối đều nhỏ hơn hoặc bằng 1.0
 	return rel_diff_x <= 1.0 && rel_diff_y <= 1.0;
