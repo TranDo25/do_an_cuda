@@ -448,16 +448,11 @@ int find_point_index(Point* Ptest, Point pdoubt) {
 Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* points_to_convex_ind) {
 	//global
 	int n_input = n_poly;
-	//global
-	Point* input_poly = new Point[20];
-	for (int i = 0; i < n_input; i++) {
-		input_poly[i].x = i;
-		input_poly[i].y = i;
-	}
-	for (int i = 0; i < n_input; i++) {
-		input_poly[i].x = in_poly[i].x;
-		input_poly[i].y = in_poly[i].y;
-	}
+    Point input_poly[20];
+    for (int i = 0; i < n_input; i++) {
+        input_poly[i].x = in_poly[i].x;
+        input_poly[i].y = in_poly[i].y;
+    }
 	//global
 	double lambda_p = 0.0;
 	//khởi tạo mảng xoay R, các hàm sin cos ở dưới cũng dùng thư viện cmath
