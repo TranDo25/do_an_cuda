@@ -1,9 +1,9 @@
 ﻿#include <iostream>
+#include <ctime>
 
 #define NMAX 512
 #define NMIN -999999
 #define DBL_MAX 1.7976931348623158e+308
-
 
 
 const double EPS = 1E-8;
@@ -25,68 +25,71 @@ bool point_same(Point& a, Point& b) {
 }
 
 //======================hàm custom ở dưới=========================
-// Hàm tính giai thừa
+//
+// // Hàm tính giai thừa
 double factorial(int n) {
-    if (n == 0 || n == 1) {
-        return 1;
-    } else {
-        return n * factorial(n - 1);
-    }
+	if (n == 0 || n == 1) {
+		return 1;
+	}
+	else {
+		return n * factorial(n - 1);
+	}
 }
 // Hàm tính lũy thừa
 double power(double base, int exponent) {
-    double result = 1.0;
-    for (int i = 0; i < exponent; ++i) {
-        result *= base;
-    }
-    return result;
+	double result = 1.0;
+	for (int i = 0; i < exponent; ++i) {
+		result *= base;
+	}
+	return result;
 }
 // Hàm tính sin bằng phương pháp Taylor
 double sin(double x) {
-    int terms = 10;
-    double result = 0.0;
-    for (int n = 0; n < terms; ++n) {
-        // Sử dụng công thức Taylor để tính sin
-        result += power(-1, n) * power(x, 2 * n + 1) / factorial(2 * n + 1);
-    }
-    return result;
+	int terms = 10;
+	double result = 0.0;
+	for (int n = 0; n < terms; ++n) {
+		// Sử dụng công thức Taylor để tính sin
+		result += power(-1, n) * power(x, 2 * n + 1) / factorial(2 * n + 1);
+	}
+	return result;
 }
 double sqrt(double x) {
-    if (x < 0) {
-        return -1;
-    }
+	if (x < 0) {
+		return -1;
+	}
 
-    double guess = x / 2;
-    double previous_guess = 0;
+	double guess = x / 2;
+	double previous_guess = 0;
 
-    while (guess != previous_guess) {
-        previous_guess = guess;
-        guess = (guess + x / guess) / 2;
-    }
+	while (guess != previous_guess) {
+		previous_guess = guess;
+		guess = (guess + x / guess) / 2;
+	}
 
-    return guess;
+	return guess;
 }
 // Hàm tính cos bằng phương pháp Taylor, sử dụng hàm mySin
 double cos(double x) {
-    // Sử dụng công thức cos(x) = sqrt(1 - sin^2(x))
-    return sqrt(1 - sin(x) * sin(x));
+	int terms = 10;
+	// Sử dụng công thức cos(x) = sqrt(1 - sin^2(x))
+	return sqrt(1 - sin(x) * sin(x));
 }
 
 double f_max(double x, double y) {
-    if (x > y) {
-        return x;
-    }
-    else {
-        return y;
-    }
+	if (x > y) {
+		return x;
+	}
+	else {
+		return y;
+	}
 }
 double fabs(double x) {
-    if (x >= 0) {
-        return x;
-    }
-    else {
-        return -x;
-    }
+	if (x >= 0) {
+		return x;
+	}
+	else {
+		return -x;
+	}
 }
 
 
@@ -105,11 +108,10 @@ void copy_points(Point* src, Point* dst, int& n_src, int& n_dst) {
 }
 
 //tìm tất cả các index của Point trong Point*
-int* find_all_point(Point* P, int n, Point p) {
+void find_all_point(Point* P, int n, Point p, int ptest_index[]) {
 	// Khởi tạo mảng kết quả
-	int* result = new int[n];
 	for (int i = 0; i < n; i++) {
-		result[i] = NMIN;
+		ptest_index[i] = NMIN;
 	}
 
 	// Khởi tạo biến đếm
@@ -120,12 +122,9 @@ int* find_all_point(Point* P, int n, Point p) {
 		// Nếu phần tử P[i] khớp với phần tử cần tìm
 		if (P[i].x == p.x && P[i].y == p.y) {
 			// Thêm chỉ số của phần tử P[i] vào mảng kết quả
-			result[count++] = i;
+			ptest_index[count++] = i;
 		}
 	}
-
-	// Trả về mảng kết quả
-	return result;
 }
 
 //chèn Point vào Point* theo index
@@ -449,22 +448,18 @@ int find_point_index(Point* Ptest, Point pdoubt) {
 	}
 	return index;
 }
-
+//kết thúc sửa code
 Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* points_to_convex_ind) {
-	//global
 	int n_input = n_poly;
-	//global
-	Point* input_poly = new Point[51];
-	for (int i = 0; i < n_input; i++) {
-		input_poly[i].x = i;
-		input_poly[i].y = i;
-	}
+	Point input_poly[20];
 	for (int i = 0; i < n_input; i++) {
 		input_poly[i].x = in_poly[i].x;
 		input_poly[i].y = in_poly[i].y;
 	}
+
+	//======================code Jarvis thay ở dưới===========================
 	//global
-	double δ = 0.0;
+	double delta = 0.0;
 	//khởi tạo mảng xoay R, các hàm sin cos ở dưới cũng dùng thư viện cmath
 	double alpha = -M_PI / 2;
 	//khởi tạo R
@@ -558,7 +553,6 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 
 	int size_Ptest = 4;
 
-
 	int count = 0, count4 = 0, count1 = 0, count2 = 0, count3 = 0;
 
 
@@ -609,10 +603,10 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 		multiply_matrix(dp_transpose, X_transpose, mul_dp_xtranspose, 1, 2, n_poly);
 
 		//tính Bdp
-		double βdp = get_max_value(mul_dp_xtranspose, 1, n_poly);
+		double beta_dp = get_max_value(mul_dp_xtranspose, 1, n_poly);
 
 		//cần tính tích vô hướng trong điều kiện dưới
-		if (βdp == dot_product(dp_transpose, pdoubt_plus)) {
+		if (beta_dp == dot_product(dp_transpose, pdoubt_plus)) {
 			count1 += 1;
 			//chuyển đổi dp_transpose về kiểu Point để nạp vào tập D
 			Point dp_transpose_point = { 0,0 };
@@ -626,10 +620,10 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 		}
 		//chuyển đổi pdoubt sang dạng vector<double<double>>
 
-		else if (dot_product(dp_transpose, pdoubt) - βdp > δ) {
+		else if (dot_product(dp_transpose, pdoubt) - beta_dp > delta) {
 			count2++;
-			//tính λp
-			double λp = (βdp - dot_product(dp_transpose, pdoubt_minus))
+			//tính lambda_p
+			double lambda_p = (beta_dp - dot_product(dp_transpose, pdoubt_minus))
 				/ (dot_product(dp_transpose, pdoubt) - dot_product(dp_transpose, pdoubt_minus));
 			//1x2 nhưng thực tế cần 2x1
 			//đây thực chất là 1x2 nhưng trên danh nghĩa là 2x1
@@ -641,10 +635,10 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 			convert_point_to_row_matrix(pdoubt, pdoubt_convert_to_matrix);
 
 			double A[1][2];
-			multiply_matrix_with_double(pdoubt_minus_convert_to_matrix, 1, 2, (1 - λp), A);
+			multiply_matrix_with_double(pdoubt_minus_convert_to_matrix, 1, 2, (1 - lambda_p), A);
 
 			double B[1][2];
-			multiply_matrix_with_double(pdoubt_convert_to_matrix, 1, 2, λp, B);
+			multiply_matrix_with_double(pdoubt_convert_to_matrix, 1, 2, lambda_p, B);
 
 			double p_hat_minus[1][2];
 			add_two_matrix(A, B, 1, 2, p_hat_minus);
@@ -653,7 +647,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 			convert_point_to_row_matrix(pdoubt_plus, pdoubt_plus_convert_to_matrix);
 
 			double C[1][2];
-			multiply_matrix_with_double(pdoubt_plus_convert_to_matrix, 1, 2, (1 - λp), C);
+			multiply_matrix_with_double(pdoubt_plus_convert_to_matrix, 1, 2, (1 - lambda_p), C);
 
 			double p_hat_plus[1][2];
 			add_two_matrix(C, B, 1, 2, p_hat_plus);
@@ -681,7 +675,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 				delete_point_by_index(P, size_P, pdoubt_indexp);
 				int ptest_index = find_point_index(Ptest, pdoubt);
 				delete_point_by_index(Ptest, size_Ptest, ptest_index);
-				Point p_hat_plus_point = { 0,0 };
+				Point p_hat_plus_point(0, 0);
 				convert_double_to_point(p_hat_plus, p_hat_plus_point);
 				if (allclose(p_hat_plus_point, pdoubt_plus)) {
 					//cout << "1" << endl;
@@ -713,15 +707,17 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 		else {
 			count3++;
 			delete_point(Pdoubt, size_Pdoubt, pdoubt);
-			int* ptest_index = find_all_point(Ptest, size_Ptest, pdoubt);
+			int ptest_index[NMAX];
+			find_all_point(Ptest, size_Ptest, pdoubt, ptest_index);
 			int first_index = ptest_index[0];
 			move_point_to_end(Ptest, size_Ptest, first_index);
 		}
 
 	}
+
+
 	copy_points(P, in_poly, size_P, n_poly);
-
-
+	//===============hết phần code Jarvis=================
 
 
 
@@ -735,27 +731,39 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 		}
 	}
 
+
+
+	//===========không copy đoạn này vào code chính========
 	return in_poly;
 }
 
 
 int main() {
 
-//	Point* in_poly = new Point[50];
-//
-//	in_poly[0] = { -36.8462, -4.13499 };
-//	in_poly[1] = { -28.1041, 17.8865 };
-//	in_poly[2] = { 43.4693, 1.94164 };
-//	in_poly[3] = { -46.5428, 2.97002 };
-//	in_poly[4] = { -49.2302, -43.3158 };
-//	in_poly[5] = { 18.6773, 43.0436 };
-//	in_poly[6] = { 2.69288, 15.3919 };
-//	in_poly[7] = { 20.1191, 26.2198 };
-//	in_poly[8] = { -45.2535, -17.1766 };
+	//	Point* in_poly = new Point[50];
+	//
+	//	in_poly[0] = { -36.8462, -4.13499 };
+	//	in_poly[1] = { -28.1041, 17.8865 };
+	//	in_poly[2] = { 43.4693, 1.94164 };
+	//	in_poly[3] = { -46.5428, 2.97002 };
+	//	in_poly[4] = { -49.2302, -43.3158 };
+	//	in_poly[5] = { 18.6773, 43.0436 };
+	//	in_poly[6] = { 2.69288, 15.3919 };
+	//	in_poly[7] = { 20.1191, 26.2198 };
+	//	in_poly[8] = { -45.2535, -17.1766 };
 
 
 
-    Point in_poly[9] = { {0, 0}, {1, 1}, {2, 0}, {2, 2}, {1, 3}, {0, 2}, {1, 9}, {1, 8}, {2, 5} };
+	Point in_poly[9] = { {0, 0},
+						{1, 1},
+						{2, 0},
+						{2, 2},
+						{1, 3},
+						{0, 2},
+						{1, 9},
+						{1, 8},
+						{2, 5} };
+
 	//    points[9] = {25.641, -13.4661};
 	//    points[10] = {48.255, 25.3356};
 	//    points[11] = {-42.7314, 38.4707};
@@ -798,31 +806,44 @@ int main() {
 	//    points[48] = {31.7561, -3.7755};
 	//    points[49] = {13.2739, 32.4697};
 
-
+	// Seed for random number generation
+	std::srand(std::time(0));
 	int n_poly = 9;
 
-	int points_to_convex_ind[9] = { -1, -1, -1, -1, -1, -1, -1, -1, -1 };
-    std::cout << "======================================================" << std::endl;
-    std::cout << "tap hop cac diem point:" << std::endl;
-	for (int i = 0; i < n_poly; i++) {
-        std::cout << "[" << in_poly[i].x << ", " << in_poly[i].y << "]" << std::endl;
+
+	for (int i = 0; i < n_poly; ++i) {
+		// Generate random x and y values
+		in_poly[i].x = std::rand() % 10;  // You can adjust the range as needed
+		in_poly[i].y = std::rand() % 10;  // You can adjust the range as needed
 	}
-    std::cout << "====================================================" << std::endl;
+
+	//    // Print the randomly generated points
+	//    for (int i = 0; i < n_poly; ++i) {
+	//        std::cout << "Random Point " << i + 1 << ": (" << in_poly[i].x << ", " << in_poly[i].y << ")\n";
+	//    }
+
+
+	int points_to_convex_ind[9] = { -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	std::cout << "======================================================" << std::endl;
+	std::cout << "tap hop cac diem point:" << std::endl;
+	for (int i = 0; i < n_poly; i++) {
+		std::cout << "[" << in_poly[i].x << ", " << in_poly[i].y << "]" << std::endl;
+	}
+	std::cout << "====================================================" << std::endl;
 
 	Point* result = OuterConvexApproximation_and_index(in_poly, n_poly, points_to_convex_ind);
 	// In ra giá trị x, y của các phần tử trong mảng
 	std::cout << "======================================================" << std::endl;
-    std::cout << "tap hop bao loi:" << n_poly << " diem" << std::endl;
+	std::cout << "tap hop bao loi:" << n_poly << " diem" << std::endl;
 	for (int i = 0; i < n_poly; i++) {
-        std::cout << "[" << result[i].x << ", " << result[i].y << "]" << std::endl;
+		std::cout << "[" << result[i].x << ", " << result[i].y << "]" << std::endl;
 	}
-    std::cout << "====================================================" << std::endl;
+	std::cout << "====================================================" << std::endl;
 
 	// Giải phóng bộ nhớ
 
-    std::cout << "chi so cua cac diem convex so voi tap goc:" << std::endl;
+	std::cout << "chi so cua cac diem convex so voi tap goc:" << std::endl;
 	for (int i = 0; i < n_poly; i++) std::cout << points_to_convex_ind[i] << " ";
-//	delete[] points;
 
 	return 0;
 }
