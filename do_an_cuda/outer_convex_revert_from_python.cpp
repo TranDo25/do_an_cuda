@@ -1,7 +1,10 @@
 ﻿#include<iostream>
+#include<cfloat>
+
+
+
 #define NMAX 512
-#define NMIN -999999
-#define DBL_MAX 1.7976931348623158e+308
+#define MAXN 100
 
 
 const double EPS = 1E-8;
@@ -88,7 +91,7 @@ double fabs(double x) {
 void copy_points(Point* src, Point* dst, int& n_src, int& n_dst) {
 	// Sao chép từng phần tử của mảng
 	for (int i = 0; i < n_src; i++) {
-		if (src[i].x != NMIN && src[i].y != NMIN) {
+		if (src[i].x != DBL_MIN && src[i].y != DBL_MIN) {
 			dst[i].x = src[i].x;
 			dst[i].y = src[i].y;
 		}
@@ -102,7 +105,7 @@ void copy_points(Point* src, Point* dst, int& n_src, int& n_dst) {
 void find_all_point(Point* P, int n, Point p, int ptest_index[]) {
 	// Khởi tạo mảng kết quả
 	for (int i = 0; i < n; i++) {
-		ptest_index[i] = NMIN;
+		ptest_index[i] = DBL_MIN;
 	}
 
 	// Khởi tạo biến đếm
@@ -149,8 +152,8 @@ void delete_point_by_index(Point* P, int& n, int index) {
 	for (int i = index; i < n - 1; i++) {
 		P[i] = P[i + 1];
 	}
-	P[n - 1].x = NMIN;
-	P[n - 1].y = NMIN;
+	P[n - 1].x = DBL_MIN;
+	P[n - 1].y = DBL_MIN;
 	// Cập nhật kích thước của mảng
 	n--;
 }
@@ -200,8 +203,8 @@ void delete_point(Point* P, int& n, Point pdoubt) {
 		}
 
 		// Thay thế phần tử cuối cùng của Point* bằng nullptr
-		P[n - 1].x = NMIN;
-		P[n - 1].y = NMIN;
+		P[n - 1].x = DBL_MIN;
+		P[n - 1].y = DBL_MIN;
 		//giảm n đi 1 đơn vị
 		n--;
 	}
@@ -267,8 +270,8 @@ void deletePoint(Point* arr, int& n, Point p) {
 	}
 
 	// Gán giá trị null cho vị trí cần xoá
-	arr[n - 1].x = NMIN;
-	arr[n - 1].y = NMIN;
+	arr[n - 1].x = DBL_MIN;
+	arr[n - 1].y = DBL_MIN;
 	//giảm số phần tử của mảng đi
 	n--;
 }
@@ -289,7 +292,7 @@ double dot_product(double matrix[1][2], Point point) {
 }
 
 //lấy ra phần tử lớn nhất trong ma trận
-double get_max_value(double mul_dp_xtranspose[1][50], int rows, int n_poly) {
+double get_max_value(double mul_dp_xtranspose[1][20], int rows, int n_poly) {
 	// Khởi tạo giá trị max
 	double max_value = -DBL_MAX;
 	int max_index = -1;
@@ -307,7 +310,7 @@ double get_max_value(double mul_dp_xtranspose[1][50], int rows, int n_poly) {
 	// Trả về giá trị max và vị trí của nó
 	return max_value;
 }
-void transpose_matrix(double A[][2], int cols, int rows, double A_transpose[][50]) {
+void transpose_matrix(double A[][2], int cols, int rows, double A_transpose[][20]) {
 
 	// Duyệt qua tất cả các phần tử của ma trận A
 	for (int i = 0; i < rows; i++) {
@@ -381,7 +384,7 @@ void multiply_matrix(double A[2][2], double B[2][1], double C[2][1], int m, int 
 	}
 }
 
-void multiply_matrix(double A[1][2], double B[2][50], double C[1][50], int m, int n, int p) {
+void multiply_matrix(double A[1][2], double B[2][20], double C[1][20], int m, int n, int p) {
 	// Khởi tạo ma trận kết quả
 
 	for (int i = 0; i < m; i++) {
@@ -428,7 +431,7 @@ int find_point_index(Point* Ptest, Point pdoubt) {
 	// Hàm trả về chỉ số của Point trong mảng Pest
 
 	int index = -1;
-	for (int i = 0; i < NMAX; i++) {
+	for (int i = 0; i < MAXN; i++) {
 		if (Ptest[i].x == pdoubt.x && Ptest[i].y == pdoubt.y) {
 			index = i;
 			break;
@@ -452,14 +455,12 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 	R[0][1] = sin(alpha);
 	R[1][0] = -sin(alpha);
 	R[1][1] = cos(alpha);
-
 	// Tạo một mảng các đối tượng Point
-	//nhớ dùng xong phải gán lại về bằng -999 hết
-	//Point *D = new Point[NMAX];
-	Point D[NMAX];
-	for (int i = 0; i < NMAX; i++) {
-		D[i].x = NMIN;
-		D[i].y = NMIN;
+
+	Point D[MAXN];
+	for (int i = 0; i < MAXN; i++) {
+		D[i].x = DBL_MIN;
+		D[i].y = DBL_MIN;
 	}
 	D[0] = Point(1.0, 0.0);
 	D[1] = Point(0.0, 1.0);
@@ -498,10 +499,10 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 	}
 
 	//khởi tạo P
-	Point P[NMAX];
-	for (int i = 0; i < NMAX; i++) {
-		P[i].x = NMIN;
-		P[i].y = NMIN;
+	Point P[MAXN];
+	for (int i = 0; i < MAXN; i++) {
+		P[i].x = DBL_MIN;
+		P[i].y = DBL_MIN;
 	}
 	P[0] = Point( max_x, max_y );
 	P[1] = Point( min_x, max_y );
@@ -512,10 +513,10 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 
 
 	//khởi tạo Pdoubt
-	Point Pdoubt[NMAX];
-	for (int i = 0; i < NMAX; i++) {
-		Pdoubt[i].x = NMIN;
-		Pdoubt[i].y = NMIN;
+	Point Pdoubt[MAXN];
+	for (int i = 0; i < MAXN; i++) {
+		Pdoubt[i].x = DBL_MIN;
+		Pdoubt[i].y = DBL_MIN;
 	}
 	Pdoubt[0] = Point( max_x, max_y );
 	Pdoubt[1] = Point( min_x, max_y );
@@ -524,10 +525,10 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 	int size_Pdoubt = 4;
 
 	//khởi tạo Ptest
-	Point Ptest[NMAX];
-	for (int i = 0; i < NMAX; i++) {
-		Ptest[i].x = NMIN;
-		Ptest[i].y = NMIN;
+	Point Ptest[MAXN];
+	for (int i = 0; i < MAXN; i++) {
+		Ptest[i].x = DBL_MIN;
+		Ptest[i].y = DBL_MIN;
 	}
 	Ptest[0] = Point( max_x, max_y );
 	Ptest[1] = Point( min_x, max_y );
@@ -572,17 +573,17 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 		divide_matrix_by_double_and_return_new_matrix(result_mul_matrix, dp, 2, 1, norm_sub_pminus_pplus);
 
 		//chuyển X về ma trận cho dễ làm việc
-		double X[50][2];
+		double X[20][2];
 		convert_point_to_matrix(in_poly, n_poly, X);
 
-		double X_transpose[2][50];
+		double X_transpose[2][20];
 		transpose_matrix(X, 2, n_poly, X_transpose);
 
 		//dp_tranpose 1x2
 		double dp_transpose[1][2];
 		transpose_dp(dp, dp_transpose);
 
-		double mul_dp_xtranspose[1][50];
+		double mul_dp_xtranspose[1][20];
 		multiply_matrix(dp_transpose, X_transpose, mul_dp_xtranspose, 1, 2, n_poly);
 
 		//tính Bdp
@@ -690,7 +691,7 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 		else {
 			count3++;
 			delete_point(Pdoubt, size_Pdoubt, pdoubt);
-			int ptest_index[NMAX];
+			int ptest_index[MAXN];
 			find_all_point(Ptest, size_Ptest, pdoubt, ptest_index);
 			int first_index = ptest_index[0];
 			move_point_to_end(Ptest, size_Ptest, first_index);
@@ -709,7 +710,7 @@ Point* OuterConvexApproximation(Point* in_poly, int& n_poly) {
 
 int main() {
 
-	Point* points = new Point[50];
+	Point* points = new Point[20];
 
 	points[0] = { -36.8462, -4.13499 };
 	points[1] = { -28.1041, 17.8865 };
@@ -724,46 +725,46 @@ int main() {
 	points[10] = { 48.255, 25.3356 };
 	points[11] = { -42.7314, 38.4707 };
 	points[12] = { -6.35886, -2.22682 };
-	points[13] = { -22.5093, -33.3493 };
+	points[13] = { -22.2093, -33.3493 };
 	points[14] = { 39.7656, -43.9436 };
 	points[15] = { 0.452289, -18.0967 };
 	points[16] = { -0.602331, -40.9267 };
 	points[17] = { -42.6251, -11.5858 };
 	points[18] = { 41.3817, -3.55542 };
 	points[19] = { -44.9916, 27.0205 };
-	points[20] = { -37.4635, 18.8455 };
-	points[21] = { 12.9543, 22.5412 };
-	points[22] = { 38.8572, -19.3678 };
-	points[23] = { 1.32737, 34.5982 };
-	points[24] = { 34.1511, -8.46054 };
-	points[25] = { -3.20826, -32.1672 };
-	points[26] = { 7.16548, -46.6946 };
-	points[27] = { -0.151988, 24.8293 };
-	points[28] = { 39.0737, 34.204 };
-	points[29] = { -28.7248, -36.9573 };
-	points[30] = { -22.5412, -8.57067 };
-	points[31] = { 20.982, -26.0089 };
-	points[32] = { -18.246, 15.2059 };
-	points[33] = { 18.1346, -11.2275 };
-	points[34] = { -35.2467, 34.5576 };
-	points[35] = { 45.5409, -35.1848 };
-	points[36] = { -9.12333, 6.48987 };
-	points[37] = { -1.14855, 46.1095 };
-	points[38] = { -30.0243, 12.9269 };
-	points[39] = { 15.1254, 30.3073 };
-	points[40] = { -2.35682, -29.675 };
-	points[41] = { 40.1673, -35.7979 };
-	points[42] = { -8.9687, 38.5648 };
-	points[43] = { -33.7801, -13.4661 };
-	points[44] = { -36.4891, -4.46927 };
-	points[45] = { -4.76998, 43.1674 };
-	points[46] = { -28.4752, 40.8922 };
-	points[47] = { 36.086, 0.595588 };
-	points[48] = { 31.7561, -3.7755 };
-	points[49] = { 13.2739, 32.4697 };
+	//points[20] = { -37.4635, 18.8455 };
+	//points[21] = { 12.9543, 22.5412 };
+	//points[22] = { 38.8572, -19.3678 };
+	//points[23] = { 1.32737, 34.5982 };
+	//points[24] = { 34.1511, -8.46054 };
+	//points[25] = { -3.20826, -32.1672 };
+	//points[26] = { 7.16548, -46.6946 };
+	//points[27] = { -0.151988, 24.8293 };
+	//points[28] = { 39.0737, 34.204 };
+	//points[29] = { -28.7248, -36.9573 };
+	//points[30] = { -22.5412, -8.57067 };
+	//points[31] = { 20.982, -26.0089 };
+	//points[32] = { -18.246, 15.2059 };
+	//points[33] = { 18.1346, -11.2275 };
+	//points[34] = { -35.2467, 34.5576 };
+	//points[35] = { 45.5409, -35.1848 };
+	//points[36] = { -9.12333, 6.48987 };
+	//points[37] = { -1.14855, 46.1095 };
+	//points[38] = { -30.0243, 12.9269 };
+	//points[39] = { 15.1254, 30.3073 };
+	//points[40] = { -2.35682, -29.675 };
+	//points[41] = { 40.1673, -35.7979 };
+	//points[42] = { -8.9687, 38.5648 };
+	//points[43] = { -33.7801, -13.4661 };
+	//points[44] = { -36.4891, -4.46927 };
+	//points[45] = { -4.76998, 43.1674 };
+	//points[46] = { -28.4752, 40.8922 };
+	//points[47] = { 36.086, 0.595588 };
+	//points[48] = { 31.7561, -3.7755 };
+	//points[49] = { 13.2739, 32.4697 };
 
 
-	int n_poly = 50;
+	int n_poly = 20;
 	std::cout << "======================================================" << std::endl;
 	std::cout << "tap hop cac diem point:" << std::endl;
 	for (int i = 0; i < n_poly; i++) {
