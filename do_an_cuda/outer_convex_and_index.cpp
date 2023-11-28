@@ -70,7 +70,7 @@ double sqrt(double x) {
 }
 // Hàm tính cos bằng phương pháp Taylor, sử dụng hàm mySin
 double cos(double x) {
-	int terms = 10;
+
 	// Sử dụng công thức cos(x) = sqrt(1 - sin^2(x))
 	return sqrt(1 - sin(x) * sin(x));
 }
@@ -301,7 +301,7 @@ double dot_product(double matrix[1][2], Point point) {
 double get_max_value(double mul_dp_xtranspose[1][20], int rows, int n_poly) {
 	// Khởi tạo giá trị max
 	double max_value = -DBL_MAX;
-	int max_index = -1;
+
 
 	// Lặp qua từng phần tử của mảng
 	for (int i = 0; i < rows; i++) {
