@@ -1,13 +1,15 @@
 ﻿#include <iostream>
+#include<cmath>
+#include<random>
 #include <ctime>
 #include<cfloat>
 #define NMAX 512
 #define MAXN 100
 
-
+using namespace std;
 
 const double EPS = 1E-8;
-const double M_PI = 3.14159265358979323846;
+const double PI = 3.14159265358979323846;
 
 
 struct Point {
@@ -25,55 +27,7 @@ bool point_same(Point& a, Point& b) {
 }
 
 //======================hàm custom ở dưới=========================
-//
-// // Hàm tính giai thừa
-double factorial(int n) {
-	if (n == 0 || n == 1) {
-		return 1;
-	}
-	else {
-		return n * factorial(n - 1);
-	}
-}
-// Hàm tính lũy thừa
-double power(double base, int exponent) {
-	double result = 1.0;
-	for (int i = 0; i < exponent; ++i) {
-		result *= base;
-	}
-	return result;
-}
-// Hàm tính sin bằng phương pháp Taylor
-double sin(double x) {
-	int terms = 10;
-	double result = 0.0;
-	for (int n = 0; n < terms; ++n) {
-		// Sử dụng công thức Taylor để tính sin
-		result += power(-1, n) * power(x, 2 * n + 1) / factorial(2 * n + 1);
-	}
-	return result;
-}
-double sqrt(double x) {
-	if (x < 0) {
-		return -1;
-	}
 
-	double guess = x / 2;
-	double previous_guess = 0;
-
-	while (guess != previous_guess) {
-		previous_guess = guess;
-		guess = (guess + x / guess) / 2;
-	}
-
-	return guess;
-}
-// Hàm tính cos bằng phương pháp Taylor, sử dụng hàm mySin
-double cos(double x) {
-
-	// Sử dụng công thức cos(x) = sqrt(1 - sin^2(x))
-	return sqrt(1 - sin(x) * sin(x));
-}
 
 double f_max(double x, double y) {
 	if (x > y) {
@@ -83,14 +37,7 @@ double f_max(double x, double y) {
 		return y;
 	}
 }
-double fabs(double x) {
-	if (x >= 0) {
-		return x;
-	}
-	else {
-		return -x;
-	}
-}
+
 
 
 //copy phần tử của mảng này chuyển sang mảng khác
@@ -374,12 +321,7 @@ void multiply_matrix(double A[2][2], double B[2][1], double C[2][1], int m, int 
 			C[i][j] = 0;
 		}
 	}
-	//for (int i = 0; i < m; i++) {
-	//	for (int j = 0; j < p; j++) {
-	//		cout << C[i][j] << " ";
-	//	}
-	//	cout << endl;
-	//}
+
 	// Nhân hai ma trận
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < p; j++) {
@@ -398,12 +340,6 @@ void multiply_matrix(double A[1][2], double B[2][20], double C[1][20], int m, in
 			C[i][j] = 0;
 		}
 	}
-	//for (int i = 0; i < m; i++) {
-	//	for (int j = 0; j < p; j++) {
-	//		cout << C[i][j] << " ";
-	//	}
-	//	cout << endl;
-	//}
 	// Nhân hai ma trận
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < p; j++) {
@@ -443,9 +379,7 @@ int find_point_index(Point* Ptest, Point pdoubt) {
 			break;
 		}
 	}
-	if (index == -1) {
-		//cout << "khong tim duoc chi so cua phan tu trong mang!" << endl;
-	}
+
 	return index;
 }
 //kết thúc sửa code
@@ -461,7 +395,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 	//global
 	double delta = 0.0;
 	//khởi tạo mảng xoay R, các hàm sin cos ở dưới cũng dùng thư viện cmath
-	double alpha = -M_PI / 2;
+	double alpha = -PI / 2;
 	//khởi tạo R
 	double R[2][2];
 
@@ -736,115 +670,43 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 	return in_poly;
 }
 
+void generateRandomPoints(Point points[], int count, unsigned int seed) {
+	std::mt19937 rng(seed); // Mersenne Twister 19937 generator
+	std::uniform_real_distribution<double> dist(-50.0, 50.0); // Phạm vi giá trị từ -10.0 đến 10.0
 
+	for (int i = 0; i < count; ++i) {
+		points[i].x = dist(rng);
+		points[i].y = dist(rng);
+	}
+}
 int main() {
+	// Đặt random seed
+	unsigned int seed = 22;
 
-	//	Point* in_poly = new Point[20];
-	//
-	//	in_poly[0] = { -36.8462, -4.13499 };
-	//	in_poly[1] = { -28.1041, 17.8865 };
-	//	in_poly[2] = { 43.4693, 1.94164 };
-	//	in_poly[3] = { -46.5428, 2.97002 };
-	//	in_poly[4] = { -49.2302, -43.3158 };
-	//	in_poly[5] = { 18.6773, 43.0436 };
-	//	in_poly[6] = { 2.69288, 15.3919 };
-	//	in_poly[7] = { 20.1191, 26.2198 };
-	//	in_poly[8] = { -45.2535, -17.1766 };
-
-
-
-	Point in_poly[9] = { {0, 0},
-						{1, 1},
-						{2, 0},
-						{2, 2},
-						{1, 3},
-						{0, 2},
-						{1, 9},
-						{1, 8},
-						{2, 5} };
-
-	//    points[9] = {25.641, -13.4661};
-	//    points[10] = {48.255, 25.3356};
-	//    points[11] = {-42.7314, 38.4707};
-	//    points[12] = {-6.35886, -2.22682};
-	//    points[13] = {-22.2093, -33.3493};
-	//    points[14] = {39.7656, -43.9436};
-	//    points[15] = {0.452289, -18.0967};
-	//    points[16] = {-0.602331, -40.9267};
-	//    points[17] = {-42.6251, -11.5858};
-	//    points[18] = {41.3817, -3.55542};
-	//    points[19] = {-44.9916, 27.0205};
-	//    points[20] = {-37.4635, 18.8455};
-	//    points[21] = {12.9543, 22.5412};
-	//    points[22] = {38.8572, -19.3678};
-	//    points[23] = {1.32737, 34.5982};
-	//    points[24] = {34.1511, -8.46054};
-	//    points[25] = {-3.20826, -32.1672};
-	//    points[26] = {7.16548, -46.6946};
-	//    points[27] = {-0.151988, 24.8293};
-	//    points[28] = {39.0737, 34.204};
-	//    points[29] = {-28.7248, -36.9573};
-	//    points[30] = {-22.5412, -8.57067};
-	//    points[31] = {20.982, -26.0089};
-	//    points[32] = {-18.246, 15.2059};
-	//    points[33] = {18.1346, -11.2275};
-	//    points[34] = {-35.2467, 34.5576};
-	//    points[35] = {45.5409, -35.1848};
-	//    points[36] = {-9.12333, 6.48987};
-	//    points[37] = {-1.14855, 46.1095};
-	//    points[38] = {-30.0243, 12.9269};
-	//    points[39] = {15.1254, 30.3073};
-	//    points[40] = {-2.35682, -29.675};
-	//    points[41] = {40.1673, -35.7979};
-	//    points[42] = {-8.9687, 38.5648};
-	//    points[43] = {-33.7801, -13.4661};
-	//    points[44] = {-36.4891, -4.46927};
-	//    points[45] = {-4.76998, 43.1674};
-	//    points[46] = {-28.4752, 40.8922};
-	//    points[47] = {36.086, 0.595588};
-	//    points[48] = {31.7561, -3.7755};
-	//    points[49] = {13.2739, 32.4697};
-
-	// Seed for random number generation
-	std::srand(std::time(0));
-	int n_poly = 9;
-
-
-	for (int i = 0; i < n_poly; ++i) {
-		// Generate random x and y values
-		in_poly[i].x = std::rand() % 10;  // You can adjust the range as needed
-		in_poly[i].y = std::rand() % 10;  // You can adjust the range as needed
+	// Sinh ngẫu nhiên 20 điểm với random seed và lưu vào mảng Point[]
+	Point points[20];
+	generateRandomPoints(points, 20, seed);
+	int count_tmp = 0;
+	// In kết quả
+	for (const auto& point : points) {
+		std::cout << "Point " << count_tmp++ << ": (" << point.x << ", " << point.y << ")\n";
 	}
-
-	//    // Print the randomly generated points
-	//    for (int i = 0; i < n_poly; ++i) {
-	//        std::cout << "Random Point " << i + 1 << ": (" << in_poly[i].x << ", " << in_poly[i].y << ")\n";
-	//    }
-
-
-	int points_to_convex_ind[9] = { -1, -1, -1, -1, -1, -1, -1, -1, -1 };
-	std::cout << "======================================================" << std::endl;
-	std::cout << "tap hop cac diem point:" << std::endl;
-	for (int i = 0; i < n_poly; i++) {
-		std::cout << "[" << in_poly[i].x << ", " << in_poly[i].y << "]" << std::endl;
-	}
-	std::cout << "====================================================" << std::endl;
-
-	Point* result = OuterConvexApproximation_and_index(in_poly, n_poly, points_to_convex_ind);
+	int n_poly = 20;
+	int point_to_convex_indx[20] = { -1, -1, -1, -1, -1, -1, -1, -1, -1,
+									-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	OuterConvexApproximation_and_index(points, n_poly, point_to_convex_indx);
 	// In ra giá trị x, y của các phần tử trong mảng
 	std::cout << "======================================================" << std::endl;
 	std::cout << "tap hop bao loi:" << n_poly << " diem" << std::endl;
 	for (int i = 0; i < n_poly; i++) {
-		std::cout << "[" << result[i].x << ", " << result[i].y << "]" << std::endl;
+		std::cout << "[" << points[i].x << ", " << points[i].y << "]" << std::endl;
 	}
 	std::cout << "====================================================" << std::endl;
+	cout << "chi so cac phan tu trong mang la" << endl;
+	for (int i = 0; i < 20; i++) {
+		cout << point_to_convex_indx[i] << " ";
+	}
 
-	// Giải phóng bộ nhớ
-
-	std::cout << "chi so cua cac diem convex so voi tap goc:" << std::endl;
-	for (int i = 0; i < n_poly; i++) std::cout << points_to_convex_ind[i] << " ";
 
 	return 0;
 }
-//hello world
-
