@@ -24,5 +24,11 @@
     <ClCompile Include="pair.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="demo_pointer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="outer_convex_and_index.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

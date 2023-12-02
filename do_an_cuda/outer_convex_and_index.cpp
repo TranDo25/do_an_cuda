@@ -367,11 +367,11 @@ void convert_point_to_row_matrix(Point p, double matrix[1][2]) {
 }
 
 //tìm chỉ số của point trong Point*
-int find_point_index(Point* Ptest, Point pdoubt) {
+int find_point_index(Point* Ptest,int n_Ptest, Point pdoubt) {
 	// Hàm trả về chỉ số của Point trong mảng Pest
 
 	int index = -1;
-	for (int i = 0; i < NMAX; i++) {
+	for (int i = 0; i < n_Ptest; i++) {
 		if (Ptest[i].x == pdoubt.x && Ptest[i].y == pdoubt.y) {
 			index = i;
 			break;
@@ -492,7 +492,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 		//không được giải phóng pdoubt vì sẽ làm mất Pdoubt
 		Point pdoubt = Pdoubt[0];
 		//lấy được chỉ số của pdoubt trong Ptest
-		int pdoubt_index_idx = find_point_index(Ptest, pdoubt);
+		int pdoubt_index_idx = find_point_index(Ptest,size_Ptest, pdoubt);
 		int pdoubt_minus_index = (pdoubt_index_idx + size_Ptest - 1) % size_Ptest;
 		// Lấy chỉ số của mảng liền sau
 		int pdoubt_plus_index = (pdoubt_index_idx + 1) % size_Ptest;
@@ -599,12 +599,12 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 			convert_double_to_point(p_hat_plus, p_hat_plus_point);
 			if (allclose(pdoubt, p_hat_minus_point) && allclose(pdoubt, p_hat_plus_point)) {
 				count4++;
-				int ptest_index = find_point_index(Ptest, pdoubt);
+				int ptest_index = find_point_index(Ptest,size_Ptest, pdoubt);
 				move_point_to_end(Ptest, size_Ptest, ptest_index);
 			}
 			else {
 				delete_point_by_index(P, size_P, pdoubt_indexp);
-				int ptest_index = find_point_index(Ptest, pdoubt);
+				int ptest_index = find_point_index(Ptest, size_Ptest, pdoubt);
 				delete_point_by_index(Ptest, size_Ptest, ptest_index);
 				Point p_hat_plus_point(0, 0);
 				convert_double_to_point(p_hat_plus, p_hat_plus_point);

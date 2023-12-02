@@ -127,6 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="demo_pointer.cpp" />
+    <ClCompile Include="outer_convex_and_index.cpp" />
     <ClCompile Include="outer_convex_revert_from_python.cpp" />
     <ClCompile Include="pair.cpp" />
     <ClCompile Include="temp_outer_convex.py" />
