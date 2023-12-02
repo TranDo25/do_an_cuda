@@ -1,8 +1,6 @@
 ﻿#include <iostream>
 #include<cmath>
 #include<random>
-#include <ctime>
-#include<cfloat>
 #define NMAX 512
 #define MAXN 100
 
@@ -681,7 +679,7 @@ void generateRandomPoints(Point points[], int count, unsigned int seed) {
 }
 int main() {
 	// Đặt random seed
-	unsigned int seed = 22;
+	unsigned int seed =20;
 
 	// Sinh ngẫu nhiên 20 điểm với random seed và lưu vào mảng Point[]
 	Point points[20];
