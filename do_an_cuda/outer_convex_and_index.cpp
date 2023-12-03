@@ -42,10 +42,8 @@ double f_max(double x, double y) {
 void copy_points(Point* src, Point* dst, int& n_src, int& n_dst) {
 	// Sao chép từng phần tử của mảng
 	for (int i = 0; i < n_src; i++) {
-		if (src[i].x != DBL_MIN && src[i].y != DBL_MIN) {
 			dst[i].x = src[i].x;
 			dst[i].y = src[i].y;
-		}
 
 	}
 	//thay đổi lại số phần tử của mảng n_poly
@@ -56,7 +54,7 @@ void copy_points(Point* src, Point* dst, int& n_src, int& n_dst) {
 void find_all_point(Point* P, int n, Point p, int ptest_index[]) {
 	// Khởi tạo mảng kết quả
 	for (int i = 0; i < n; i++) {
-		ptest_index[i] = DBL_MIN;
+		ptest_index[i] = -1;
 	}
 
 	// Khởi tạo biến đếm
@@ -103,8 +101,8 @@ void delete_point_by_index(Point* P, int& n, int index) {
 	for (int i = index; i < n - 1; i++) {
 		P[i] = P[i + 1];
 	}
-	P[n - 1].x = DBL_MIN;
-	P[n - 1].y = DBL_MIN;
+	P[n - 1].x = -9999;
+	P[n - 1].y = -9999;
 	// Cập nhật kích thước của mảng
 	n--;
 }
@@ -154,8 +152,8 @@ void delete_point(Point* P, int& n, Point pdoubt) {
 		}
 
 		// Thay thế phần tử cuối cùng của Point* bằng nullptr
-		P[n - 1].x = DBL_MIN;
-		P[n - 1].y = DBL_MIN;
+		P[n - 1].x = -9999;
+		P[n - 1].y = -9999;
 		//giảm n đi 1 đơn vị
 		n--;
 	}
@@ -221,8 +219,8 @@ void deletePoint(Point* arr, int& n, Point p) {
 	}
 
 	// Gán giá trị null cho vị trí cần xoá
-	arr[n - 1].x = DBL_MIN;
-	arr[n - 1].y = DBL_MIN;
+	arr[n - 1].x = -9999;
+	arr[n - 1].y = -9999;
 	//giảm số phần tử của mảng đi
 	n--;
 }
@@ -245,7 +243,7 @@ double dot_product(double matrix[1][2], Point point) {
 //lấy ra phần tử lớn nhất trong ma trận
 double get_max_value(double mul_dp_xtranspose[1][20], int rows, int n_poly) {
 	// Khởi tạo giá trị max
-	double max_value = -DBL_MAX;
+	double max_value = mul_dp_xtranspose[0][0];
 
 
 	// Lặp qua từng phần tử của mảng
@@ -405,10 +403,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 	// Tạo một mảng các đối tượng Point
 
 	Point D[MAXN];
-	for (int i = 0; i < MAXN; i++) {
-		D[i].x = DBL_MIN;
-		D[i].y = DBL_MIN;
-	}
+	
 	D[0] = Point(1.0, 0.0);
 	D[1] = Point(0.0, 1.0);
 	D[2] = Point(-1.0, 0.0);
@@ -417,13 +412,13 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 
 
 	// Khởi tạo giá trị ban đầu
-	double min_x = DBL_MAX;
-	double min_y = DBL_MAX;
-	double max_x = -DBL_MAX;
-	double max_y = -DBL_MAX;
+	double min_x = in_poly[0].x;
+	double min_y = in_poly[0].y;
+	double max_x = in_poly[0].x;
+	double max_y = in_poly[0].y;
 
 	// Duyệt qua mảng
-	for (int i = 0; i < n_poly; i++) {
+	for (int i = 1; i < n_poly; i++) {
 		// Cập nhật giá trị nhỏ nhất
 		if (in_poly[i].x < min_x) {
 			min_x = in_poly[i].x;
@@ -447,10 +442,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 
 	//khởi tạo P
 	Point P[MAXN];
-	for (int i = 0; i < MAXN; i++) {
-		P[i].x = DBL_MIN;
-		P[i].y = DBL_MIN;
-	}
+	
 	P[0] = Point(max_x, max_y);
 	P[1] = Point(min_x, max_y);
 	P[2] = Point(min_x, min_y);
@@ -461,10 +453,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 
 	//khởi tạo Pdoubt
 	Point Pdoubt[MAXN];
-	for (int i = 0; i < MAXN; i++) {
-		Pdoubt[i].x = DBL_MIN;
-		Pdoubt[i].y = DBL_MIN;
-	}
+	
 	Pdoubt[0] = Point(max_x, max_y);
 	Pdoubt[1] = Point(min_x, max_y);
 	Pdoubt[2] = Point(min_x, min_y);
@@ -473,10 +462,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 
 	//khởi tạo Ptest
 	Point Ptest[MAXN];
-	for (int i = 0; i < MAXN; i++) {
-		Ptest[i].x = DBL_MIN;
-		Ptest[i].y = DBL_MIN;
-	}
+
 	Ptest[0] = Point(max_x, max_y);
 	Ptest[1] = Point(min_x, max_y);
 	Ptest[2] = Point(min_x, min_y);
