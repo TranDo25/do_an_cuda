@@ -378,6 +378,53 @@ int find_point_index(Point* Ptest,int n_Ptest, Point pdoubt) {
 
 	return index;
 }
+//thêm hai hàm mới bên dưới này vào nữa
+int findMinPointIndex(const Point points[], int n) {
+	if (n <= 0) {
+		return -1;
+	}
+
+	int minIndex = 0;
+
+	for (int i = 1; i < n; ++i) {
+		if (points[i].y < points[minIndex].y) {
+			minIndex = i;
+		}
+		else if (points[i].y == points[minIndex].y && points[i].x < points[minIndex].x) {
+			minIndex = i;
+		}
+	}
+
+	return minIndex;
+}
+
+void moveMinPointsToFront(Point points[], int n) {
+	int minIndex = findMinPointIndex(points, n);
+	Point points_premitive[20];
+	for (int i = 0; i < n; i++) {
+		points_premitive[i] = points[i];
+	}
+	if (minIndex != -1) {
+		Point temp[20];
+		int tempIndex = 0;
+
+		// Lưu trữ các phần tử từ minIndex đến cuối mảng vào mảng tạm thời.
+		for (int i = minIndex; i < n; ++i) {
+			temp[tempIndex++] = points[i];
+		}
+
+		// Di chuyển các phần tử từ 0 đến minIndex - 1 lên một vị trí.
+		for (int i = 0; i < minIndex; ++i) {
+			points[i + n - minIndex] = points_premitive[i];
+		}
+
+		// Đặt các phần tử có hoành độ và tung độ nhỏ nhất lên đầu mảng.
+		for (int i = 0; i < tempIndex; ++i) {
+			points[i] = temp[i];
+		}
+	}
+}
+
 //kết thúc sửa code
 Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* points_to_convex_ind) {
 	int n_input = n_poly;
@@ -403,7 +450,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 	// Tạo một mảng các đối tượng Point
 
 	Point D[MAXN];
-	
+
 	D[0] = Point(1.0, 0.0);
 	D[1] = Point(0.0, 1.0);
 	D[2] = Point(-1.0, 0.0);
@@ -442,7 +489,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 
 	//khởi tạo P
 	Point P[MAXN];
-	
+
 	P[0] = Point(max_x, max_y);
 	P[1] = Point(min_x, max_y);
 	P[2] = Point(min_x, min_y);
@@ -453,7 +500,7 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 
 	//khởi tạo Pdoubt
 	Point Pdoubt[MAXN];
-	
+
 	Pdoubt[0] = Point(max_x, max_y);
 	Pdoubt[1] = Point(min_x, max_y);
 	Pdoubt[2] = Point(min_x, min_y);
@@ -633,6 +680,8 @@ Point* OuterConvexApproximation_and_index(Point* in_poly, int& n_poly, int* poin
 	}
 
 
+	// Di chuyển toàn bộ các phần tử có hoành độ và tung độ nhỏ nhất về sau lên đầu mảng.
+	moveMinPointsToFront(P, size_P);
 	copy_points(P, in_poly, size_P, n_poly);
 	//===============hết phần code Jarvis=================
 
@@ -663,19 +712,36 @@ void generateRandomPoints(Point points[], int count, unsigned int seed) {
 		points[i].y = dist(rng);
 	}
 }
+
 int main() {
 	// Đặt random seed
-	unsigned int seed =20;
+	unsigned int seed =111;
 
 	// Sinh ngẫu nhiên 20 điểm với random seed và lưu vào mảng Point[]
+	//Point points[20] = {
+	//		{1, 4},
+	//		{1, 2},
+	//		{2, 1},
+	//		{3, 2},
+	//		{4, -1},
+	//		{-2, -1},
+	//		{-1, 1},
+	//		{-3, 1},
+	//		{-2 ,3},
+	//		{-3, -1},
+	//		{4,1}
+	//
+	//
+	//};
 	Point points[20];
 	generateRandomPoints(points, 20, seed);
 	int count_tmp = 0;
 	// In kết quả
-	for (const auto& point : points) {
-		std::cout << "Point " << count_tmp++ << ": (" << point.x << ", " << point.y << ")\n";
-	}
 	int n_poly = 20;
+
+	for (int i = 0; i < n_poly; i++) {
+		std::cout << "[" << points[i].x << ", " << points[i].y << "]\n";
+	}
 	int point_to_convex_indx[20] = { -1, -1, -1, -1, -1, -1, -1, -1, -1,
 									-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 	OuterConvexApproximation_and_index(points, n_poly, point_to_convex_indx);
@@ -686,11 +752,13 @@ int main() {
 		std::cout << "[" << points[i].x << ", " << points[i].y << "]" << std::endl;
 	}
 	std::cout << "====================================================" << std::endl;
-	cout << "chi so cac phan tu trong mang la" << endl;
-	for (int i = 0; i < 20; i++) {
-		cout << point_to_convex_indx[i] << " ";
-	}
 
+	std::cout << "chi so cac phan tu trong mang la:" << std::endl;
+
+
+	for (int i = 0; i < 20; i++) {
+		std::cout << point_to_convex_indx[i] << " ";
+	}
 
 	return 0;
 }
