@@ -5,4 +5,5 @@
 * Jarvis.cpp: code chuẩn hàm Jarvis
 * temp_outer_convex.py: file outer convex viết bằng python
 ## các code trên đều có thể chạy được riêng lẻ từng file
+### note: các file khác ngoài các file trên đều không quan trọng!!!
 
