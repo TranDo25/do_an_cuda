@@ -148,28 +148,27 @@ int main() {
 	unsigned int seed = 111;
 
 	// Sinh ngẫu nhiên 20 điểm với random seed và lưu vào mảng Point[]
-	Point points[20];
-	/*	= {
-						{1, 4},
-						{1, 2},
-						{2, 1},
-						{3, 2},
-						{4, -1},
-						{-2, -1},
-						{-1, 1},
-						{-3, 1},
-						{-2 ,3},
-						{-3, -1},
-						{4,1}
+    Point points[11] = {
+            Point(1, 4),
+            Point(1, 2),
+            Point(2, 1),
+            Point(3, 2),
+            Point(4, -1),
+            Point(-2, -1),
+            Point(-1, 1),
+            Point(-3, 1),
+            Point(-2 ,3),
+            Point(-3, -1),
+            Point(4,1)
 
-	};*/
-	generateRandomPoints(points, 20, seed);
+    };
+//	generateRandomPoints(points, 20, seed);
 	int count_tmp = 0;
 	// In kết quả
 	for (const auto& point : points) {
 		std::cout << "Point " << count_tmp++ << ": (" << point.x << ", " << point.y << ")\n";
 	}
-	int n_poly = 20;
+	int n_poly = 11;
 	int point_to_convex_indx[20] = { -1, -1, -1, -1, -1, -1, -1, -1, -1,
 									-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 	Jarvis_and_index(points, n_poly, point_to_convex_indx);

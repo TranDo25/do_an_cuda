@@ -15,19 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="outer_convex_revert_from_python.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="temp_outer_convex.py">
+    <ClCompile Include="algo_1-outer_convex_revert_from_python.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pair.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="demo_pointer.cpp">
+    <ClCompile Include="outer_convex_and_index.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="outer_convex_and_index.cpp">
+    <ClCompile Include="Jarvis.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="outer-convex-and-index-optimize-cost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="algo_2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
