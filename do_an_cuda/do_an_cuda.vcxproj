@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="algo_4-inner-convex-and-index.cpp" />
     <ClCompile Include="algo_4-inner-convex-approximation.cpp" />
     <ClCompile Include="Jarvis.cpp" />
     <ClCompile Include="aglo_1-outer-convex-and-index-optimize-cost.cpp" />

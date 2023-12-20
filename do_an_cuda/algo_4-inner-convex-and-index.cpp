@@ -4,8 +4,9 @@
 #include<iostream>
 #include<cmath>
 
-const double PI = 3.14159265358979323846;
 using namespace std;
+const double EPS = 1E-8;
+const double PI = 3.14159265358979323846;
 
 struct Point {
     double x, y;
@@ -14,11 +15,77 @@ struct Point {
 
     Point(double x, double y) : x(x), y(y) {}
 };
-
+int sig(double d) { return (d > EPS) - (d < -EPS); }
+bool point_same(Point& a, Point& b) {
+    return sig(a.x - b.x) == 0 && sig(a.y - b.y) == 0;
+}
+//=============================
 struct Edge {
     Point first_point;
     Point second_point;
 };
+//thêm hai hàm mới bên dưới này vào nữa
+int findMinPointIndex(const Point points[], int n) {
+    if (n <= 0) {
+        return -1;
+    }
+
+    int minIndex = 0;
+
+    for (int i = 1; i < n; ++i) {
+        if (points[i].y < points[minIndex].y) {
+            minIndex = i;
+        }
+        else if (points[i].y == points[minIndex].y && points[i].x < points[minIndex].x) {
+            minIndex = i;
+        }
+    }
+
+    return minIndex;
+}
+
+void moveMinPointsToFront(Point points[], int n) {
+    int minIndex = findMinPointIndex(points, n);
+    Point points_premitive[20];
+    for (int i = 0; i < n; i++) {
+        points_premitive[i] = points[i];
+    }
+    if (minIndex != -1) {
+        Point temp[20];
+        int tempIndex = 0;
+
+        // Lưu trữ các phần tử từ minIndex đến cuối mảng vào mảng tạm thời.
+        for (int i = minIndex; i < n; ++i) {
+            temp[tempIndex++] = points[i];
+        }
+
+        // Di chuyển các phần tử từ 0 đến minIndex - 1 lên một vị trí.
+        for (int i = 0; i < minIndex; ++i) {
+            points[i + n - minIndex] = points_premitive[i];
+        }
+
+        // Đặt các phần tử có hoành độ và tung độ nhỏ nhất lên đầu mảng.
+        for (int i = 0; i < tempIndex; ++i) {
+            points[i] = temp[i];
+        }
+    }
+}
+// Hàm đảo ngược các phần tử trong mảng Point
+void reversePoints(Point* points, int size) {
+    int start = 0;
+    int end = size - 1;
+
+    while (start < end) {
+        // Swap giữa points[start] và points[end]
+        Point temp = points[start];
+        points[start] = points[end];
+        points[end] = temp;
+
+        // Di chuyển lần lượt đến phần tử thứ hai và thứ hai từ cuối
+        ++start;
+        --end;
+    }
+}
 //copy phần tử của mảng này chuyển sang mảng khác
 void copy_points(Point* src, Point* dst, int& n_src, int& n_dst) {
     // Sao chép từng phần tử của mảng
@@ -31,7 +98,7 @@ void copy_points(Point* src, Point* dst, int& n_src, int& n_dst) {
     n_dst = n_src;
 }
 // Hàm kiểm tra xem một Point đã tồn tại trong mảng hay chưa
-bool pointExists(const Point *uniquePoints, int size, const Point &p) {
+bool pointExists(const Point* uniquePoints, int size, const Point& p) {
     for (int i = 0; i < size; ++i) {
         if (uniquePoints[i].x == p.x && uniquePoints[i].y == p.y) {
             return true;
@@ -41,7 +108,7 @@ bool pointExists(const Point *uniquePoints, int size, const Point &p) {
 }
 
 // Hàm lọc ra các Point phân biệt từ mảng các Edge
-void uniquePoints(const Edge *edges, int size, Point *uniquePoints, int &uniqueSize) {
+void uniquePoints(const Edge* edges, int size, Point* uniquePoints, int& uniqueSize) {
     for (int i = 0; i < size; ++i) {
         // Kiểm tra first_point
         if (!pointExists(uniquePoints, uniqueSize, edges[i].first_point)) {
@@ -58,7 +125,7 @@ void uniquePoints(const Edge *edges, int size, Point *uniquePoints, int &uniqueS
 }
 
 //chen 1 canh vao phan tu
-void insert_edge(Edge *edges, int &n, const Edge &edge, int index) {
+void insert_edge(Edge* edges, int& n, const Edge& edge, int index) {
 
     if (index == -1) {
         index = n;
@@ -72,7 +139,7 @@ void insert_edge(Edge *edges, int &n, const Edge &edge, int index) {
 }
 
 //xoa canh theo chi so
-void erase_edge(Edge *edges, int &n, int index) {
+void erase_edge(Edge* edges, int& n, int index) {
     if (index < 0 || index >= n) {
         return;
     }
@@ -85,15 +152,15 @@ void erase_edge(Edge *edges, int &n, int index) {
 }
 
 //tim chi so cua 1 canh trong mang
-int find_edge_index(Edge *edges, int n, Edge &edge) {
+int find_edge_index(Edge* edges, int n, Edge& edge) {
     int index = -1;
     for (int i = 0; i < n; i++) {
         if (
-                edges[i].first_point.x == edge.first_point.x &&
-                edges[i].first_point.y == edge.first_point.y &&
-                edges[i].second_point.x == edge.second_point.x &&
-                edges[i].second_point.y == edge.second_point.y
-                ) {
+            edges[i].first_point.x == edge.first_point.x &&
+            edges[i].first_point.y == edge.first_point.y &&
+            edges[i].second_point.x == edge.second_point.x &&
+            edges[i].second_point.y == edge.second_point.y
+            ) {
             index = i;
             break;
         }
@@ -104,7 +171,8 @@ int find_edge_index(Edge *edges, int n, Edge &edge) {
 double f_max(double x, double y) {
     if (x > y) {
         return x;
-    } else {
+    }
+    else {
         return y;
     }
 }
@@ -141,7 +209,7 @@ void multiply_R_matrix(double R[2][2], double B[2][1], double C[2][1], int m = 2
 }
 
 //kiểm tra allclose của 2 Point
-bool allclose(const Point &p1, const Point &p2, double rtol = 1e-5, double atol = 1e-8) {
+bool allclose(const Point& p1, const Point& p2, double rtol = 1e-5, double atol = 1e-8) {
     // Tính độ lệch tương đối giữa hai phần tử x
     double rel_diff_x = fabs(p1.x - p2.x) / (atol + rtol * f_max(fabs(p1.x), fabs(p2.x)));
 
@@ -169,7 +237,7 @@ double findMaxValue(double arr[], int size) {
     return maxVal;
 }
 // Hàm xoá tất cả các cạnh có giá trị bằng edoubt khỏi mảng các cạnh
-void delete_edges(Edge *edges, int &n, Edge edoubt) {
+void delete_edges(Edge* edges, int& n, Edge edoubt) {
     // Khởi tạo biến đếm để lưu vị trí của các cạnh cần xoá
     int count = 0;
 
@@ -177,19 +245,20 @@ void delete_edges(Edge *edges, int &n, Edge edoubt) {
     for (int i = 0; i < n; i++) {
         // So sánh cạnh hiện tại với cạnh cần xoá
         if (
-                (edges[i].first_point.x == edoubt.first_point.x &&
+            (edges[i].first_point.x == edoubt.first_point.x &&
                 edges[i].first_point.y == edoubt.first_point.y &&
                 edges[i].second_point.x == edoubt.second_point.x &&
-                edges[i].second_point.y == edoubt.second_point.y)||
-                        (edges[i].first_point.x == edoubt.second_point.x &&
-                         edges[i].first_point.y == edoubt.second_point.y &&
-                         edges[i].second_point.x == edoubt.first_point.x &&
-                         edges[i].second_point.y == edoubt.first_point.y)
-                ) {
+                edges[i].second_point.y == edoubt.second_point.y) ||
+            (edges[i].first_point.x == edoubt.second_point.x &&
+                edges[i].first_point.y == edoubt.second_point.y &&
+                edges[i].second_point.x == edoubt.first_point.x &&
+                edges[i].second_point.y == edoubt.first_point.y)
+            ) {
             // Không sao chép cạnh này vào mảng mới
             // Điều này giống như là loại bỏ cạnh này khỏi mảng
             count++;
-        } else {
+        }
+        else {
             // Nếu không phải là cạnh cần xoá, sao chép nó vào vị trí mới
             edges[i - count] = edges[i];
         }
@@ -228,7 +297,7 @@ double dot_product(double matrix1[1][2], double matrix2[2][1]) {
 }
 
 //chuyển Point sang double**, áp dụng cho chuyển đổi mảng in_poly thành X
-void convert_many_points_to_matrix(Point *points, int n, double X[][2]) {
+void convert_many_points_to_matrix(Point* points, int n, double X[][2]) {
     // Lặp qua từng phần tử Point
     for (int i = 0; i < n; i++) {
         X[i][0] = points[i].x;
@@ -260,7 +329,7 @@ double norm_2(Point p) {
 //tính chuẩn euclid của Point
 double norm_2(Point p1, Point p2) {
     // Tính bình phương của từng phần tử của Point
-    Point tmp = {0, 0};
+    Point tmp = { 0, 0 };
     tmp.x = p1.x - p2.x;
     tmp.y = p1.y - p2.y;
     double x2 = tmp.x * tmp.x;
@@ -331,7 +400,7 @@ double find_min_y(Point X[], int n) {
 }
 
 // Hàm tìm các phần tử Point có giá trị hoành độ bằng x
-void find_points_by_x(Point *X, int &n, double min_x, Point points[], int &size_point) {
+void find_points_by_x(Point* X, int& n, double min_x, Point points[], int& size_point) {
 
     // Duyệt qua tất cả các phần tử trong mảng X
     int count = 0;
@@ -348,7 +417,7 @@ void find_points_by_x(Point *X, int &n, double min_x, Point points[], int &size_
 }
 
 // Hàm tìm các phần tử Point có giá trị hoành độ bằng y
-void find_points_by_y(Point *X, int n, double min_y, Point points[], int &size_point) {
+void find_points_by_y(Point* X, int n, double min_y, Point points[], int& size_point) {
 
     // Duyệt qua tất cả các phần tử trong mảng X
     int count = 0;
@@ -364,7 +433,14 @@ void find_points_by_y(Point *X, int n, double min_y, Point points[], int &size_p
     size_point = count;
 }
 
-void inner_convex_approximation(Point *in_poly, int &n_poly) {
+void inner_convex_approximation_and_index(Point* in_poly, int& n_poly, int* points_to_convex_ind) {
+    int n_input = n_poly;
+    Point input_poly[20];
+    for (int i = 0; i < n_input; i++) {
+        input_poly[i].x = in_poly[i].x;
+        input_poly[i].y = in_poly[i].y;
+    }
+    //=========================hay thay the loi Jarvis vao duoi===========
     //global
     double delta = 0.0;
     //khởi tạo mảng xoay R, các hàm sin cos ở dưới cũng dùng thư viện cmath
@@ -428,10 +504,10 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
     double q32 = find_min_y(min_X, size_min_X);
     double q41 = find_max_x(min_Y, size_min_Y);
 
-    Point q1 = {max_x, q12};
-    Point q2 = {q21, max_y};
-    Point q3 = {min_x, q32};
-    Point q4 = {q41, min_y};
+    Point q1 = { max_x, q12 };
+    Point q2 = { q21, max_y };
+    Point q3 = { min_x, q32 };
+    Point q4 = { q41, min_y };
 
     Point Xcomma[100];
     Xcomma[0] = q1;
@@ -440,10 +516,10 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
     Xcomma[3] = q4;
     int size_X_comma = 4;
 
-    Edge edge0 = {q1, q2};
-    Edge edge1 = {q2, q3};
-    Edge edge2 = {q3, q4};
-    Edge edge3 = {q4, q1};
+    Edge edge0 = { q1, q2 };
+    Edge edge1 = { q2, q3 };
+    Edge edge2 = { q3, q4 };
+    Edge edge3 = { q4, q1 };
     //khoi tao E_test
     Edge E_test[100];
     E_test[0] = edge0;
@@ -464,7 +540,7 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
         Point p_plus = edoubt.second_point;
 
         //tinh dpp_plus theo cong thuc (44)
-        Point result_sub_pplus_p = {0, 0};
+        Point result_sub_pplus_p = { 0, 0 };
         subtract_points(p_plus, p, result_sub_pplus_p);
         double transposed_matrix[2][1];
         convert_point_to_colmatrix(result_sub_pplus_p, transposed_matrix);
@@ -532,7 +608,8 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
             }
             if (beta_p_pplus - dot_product(dpp_plus_T, p_T) <= delta) {
                 delete_edges(Edoubt, size_Edoubt, edoubt);
-            } else {
+            }
+            else {
                 Point p_hat[100];
                 int size_p_hat = 0;
                 Point p_hat_calc[100];
@@ -549,7 +626,7 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
                     X_calc[size_X_calc].y = Bpp_plus[i].y;
                     size_X_calc++;
                 }
-                Point p_hat_calc_sub_p = {0, 0};
+                Point p_hat_calc_sub_p = { 0, 0 };
                 subtract_points(p_hat_calc[0], p, p_hat_calc_sub_p);
                 //cần tính max của chuẩn || x-p ||
                 //mang nay dung de tim max cua norm(x_calc - p)
@@ -557,14 +634,14 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
 
                 int size_arr_norm_xcalc_p = 0;
                 for (int i = 0; i < size_Bpp_plus; i++) {
-                    Point x_calc_sub_p = {0, 0};
+                    Point x_calc_sub_p = { 0, 0 };
                     subtract_points(X_calc[i], p, x_calc_sub_p);
                     double res_norm = norm_2(x_calc_sub_p);
                     arr_norm_xcalc_p[size_arr_norm_xcalc_p++] = res_norm;
                 }
                 double max_arr_norm_xcalc_p = findMaxValue(arr_norm_xcalc_p, size_arr_norm_xcalc_p);
                 for (int i = 0; i < size_Bpp_plus; i++) {
-                    Point tmp = {0, 0};
+                    Point tmp = { 0, 0 };
                     subtract_points(Bpp_plus[i], p, tmp);
                     if (norm_2(tmp) == max_arr_norm_xcalc_p) {
                         p_hat[size_p_hat++] = Bpp_plus[i];
@@ -574,15 +651,18 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
                 if (allclose(p_hat_point, p) && !allclose(p_hat_point, p_plus)) {
                     int edoubt_index = find_edge_index(Edoubt, size_Edoubt, edoubt);
                     erase_edge(Edoubt, size_Edoubt, edoubt_index);
-                } else if (allclose(p_hat_point, p_plus) && !allclose(p_hat_point, p)) {
+                }
+                else if (allclose(p_hat_point, p_plus) && !allclose(p_hat_point, p)) {
                     int edoubt_index = find_edge_index(Edoubt, size_Edoubt, edoubt);
                     erase_edge(Edoubt, size_Edoubt, edoubt_index);
-                } else if (allclose(p_hat_point, p_plus) && allclose(p_hat_point, p)) {
+                }
+                else if (allclose(p_hat_point, p_plus) && allclose(p_hat_point, p)) {
                     //nothing to do
-                } else {
+                }
+                else {
                     // tinh d[p, p^]
                     double dpp_hat[2][1];
-                    Point tmp = {0, 0};
+                    Point tmp = { 0, 0 };
                     subtract_points(p_hat_point, p, tmp);
                     double tmp2[1][2];
                     convert_point_to_rowmatrix(tmp, tmp2);
@@ -593,7 +673,7 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
 
                     //tinh d[p^, p+]
                     double dp_hat_p_plus[2][1];
-                    Point tmp7 = {0, 0};
+                    Point tmp7 = { 0, 0 };
                     subtract_points(p_plus, p_hat_point, tmp7);
                     double tmp8[1][2];
                     convert_point_to_rowmatrix(tmp7, tmp8);
@@ -604,7 +684,7 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
 
                     //tinh d[p^, p.T]
                     double dp_hat_p_T[2][1];
-                    Point tmp4 = {0, 0};
+                    Point tmp4 = { 0, 0 };
                     subtract_points(p, p_hat_point, tmp4);
                     double tmp5[1][2];
                     convert_point_to_rowmatrix(tmp4, tmp5);
@@ -620,8 +700,8 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
                     //them p_hat_point vao XComma
                     Xcomma[size_X_comma++] = p_hat_point;
 
-                    Edge A = {p, p_hat_point};
-                    Edge B = {p_hat_point, p_plus};
+                    Edge A = { p, p_hat_point };
+                    Edge B = { p_hat_point, p_plus };
                     //xoa canh cu, them 2 canh moi vao mang E_test
                     int e_index = find_edge_index(E_test, size_E_test, edoubt);
                     erase_edge(E_test, size_E_test, e_index);
@@ -637,7 +717,8 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
             }
 
 
-        } else {
+        }
+        else {
             delete_edges(Edoubt, size_Edoubt, edoubt);
         }
     }
@@ -645,87 +726,105 @@ void inner_convex_approximation(Point *in_poly, int &n_poly) {
     int uniqueSize = 0;
     Point in_uniquePoints[20];
     uniquePoints(E_test, size_E_test, in_uniquePoints, uniqueSize);
+    reversePoints(in_uniquePoints, uniqueSize);
+    moveMinPointsToFront(in_uniquePoints, uniqueSize);
     copy_points(in_uniquePoints, in_poly, uniqueSize, n_poly);
-//    cout << "Tap cac canh cua bao loi la:" << endl;
-//    for (int i = 0; i < size_E_test; i++) {
-//        cout << "[(" << E_test[i].first_point.x << " " << E_test[i].first_point.y << ")"
-//             << "(" << E_test[i].second_point.x << " " << E_test[i].second_point.y << ")]" << endl;
-//    }
-//    return E_test;
+
+    //================================================================
+
+    for (int i = 0; i < n_poly; i++) {
+        for (int j = 0; j < n_input; j++) {
+            if (point_same(in_poly[i], input_poly[j])) {
+                points_to_convex_ind[i] = j;
+                break;
+            }
+        }
+    }
 }
 
 
 int main() {
-//    Point points[100] = {
-//            //cac diem co hoanh do nho nhat
-//            Point(-3, 1),
-//            Point(-3, -1),
-//            // cac diem co hoanh do lon nhat
-//            Point(4, -1),
-//            Point(4, 1),
-//
-//            //cac diem co tung do nho nhat
-//            Point(-2, -1),
-//
-//            //cac diem co tung do lon nhat
-//            Point(1, 4),
-//            Point(1, 2),
-//            Point(2, 1),
-//            Point(3, 2),
-//            Point(-1, 1),
-//            Point(-2, 3),
-//
-//    };
-//    Point points[100] = {
-//            Point( 12.71359434 , -21.73167608),
-//            Point(-20.38584267 , -57.00750014),
-//            Point(-75.60994969 ,  40.07504469),
-//            Point(-51.28840354 , -78.34603557),
-//            Point( 31.01026119 ,   9.79174368),
-//            Point(-93.54753399 ,   4.56224875),
-//            Point(-80.78339439 ,  95.87260967),
-//            Point( 90.61767492 ,  -1.93642264),
-//            Point( 88.71974025 ,-141.23911972),
-//            Point(  1.34299907 ,-146.06373453),
-//            Point(-18.40068414 ,-135.56561234),
-//            Point(-95.44704724 ,  32.50642382),
-//            Point(-71.60161099 , -50.45836824),
-//            Point( -8.24640395 ,-100.21427597),
-//            Point( 35.94412166 ,  -5.68853525),
-//            Point(  1.34060032 , -38.00406922),
-//            Point( 75.17118834 ,  26.8814041 ),
-//            Point(-86.45155878 ,  67.45278846),
-//    };
-    Point points[100] = {
-            Point( -1.08203696, -123.03327827),
-            Point(-20.86190579,  -84.63800741),
-            Point(-85.30525529,  127.19585274),
-            Point( 50.9714922 ,   24.44729803),
-            Point(101.88982227,   56.0780549 ),
-            Point( 12.24647246,   68.01561449),
-            Point(-29.06184458,   65.33139573),
-            Point( 83.16683891,  -11.53539228),
-            Point(123.73996755, -111.00221745),
-            Point(  5.39768613,  149.6938521 ),
-            Point( 38.28235857,  121.2395262 ),
-            Point(120.5365791 , -105.65799319),
-            Point(-65.76238712,  125.46268328),
-            Point(-39.19309983,  -12.2523361 ),
-            Point( 28.29766166,   -1.24934286),
-            Point( -5.63865253,  -21.65336384),
-            Point( 94.82452389, -105.04749459),
-            Point( 48.04456786,   68.3858024 ),
-    };
-    int n_poly = 18;
+        Point points[100] = {
+                //cac diem co hoanh do nho nhat
+                Point(-3, 1),
+                Point(-3, -1),
+                // cac diem co hoanh do lon nhat
+                Point(4, -1),
+                Point(4, 1),
+    
+                //cac diem co tung do nho nhat
+                Point(-2, -1),
+    
+                //cac diem co tung do lon nhat
+                Point(1, 4),
+                Point(1, 2),
+                Point(2, 1),
+                Point(3, 2),
+                Point(-1, 1),
+                Point(-2, 3),
+    
+        };
+    //    Point points[100] = {
+    //            Point( 12.71359434 , -21.73167608),
+    //            Point(-20.38584267 , -57.00750014),
+    //            Point(-75.60994969 ,  40.07504469),
+    //            Point(-51.28840354 , -78.34603557),
+    //            Point( 31.01026119 ,   9.79174368),
+    //            Point(-93.54753399 ,   4.56224875),
+    //            Point(-80.78339439 ,  95.87260967),
+    //            Point( 90.61767492 ,  -1.93642264),
+    //            Point( 88.71974025 ,-141.23911972),
+    //            Point(  1.34299907 ,-146.06373453),
+    //            Point(-18.40068414 ,-135.56561234),
+    //            Point(-95.44704724 ,  32.50642382),
+    //            Point(-71.60161099 , -50.45836824),
+    //            Point( -8.24640395 ,-100.21427597),
+    //            Point( 35.94412166 ,  -5.68853525),
+    //            Point(  1.34060032 , -38.00406922),
+    //            Point( 75.17118834 ,  26.8814041 ),
+    //            Point(-86.45155878 ,  67.45278846),
+    //    };
+    //Point points[100] = {
+    //        Point(-1.08203696, -123.03327827),
+    //        Point(-20.86190579,  -84.63800741),
+    //        Point(-85.30525529,  127.19585274),
+    //        Point(50.9714922 ,   24.44729803),
+    //        Point(101.88982227,   56.0780549),
+    //        Point(12.24647246,   68.01561449),
+    //        Point(-29.06184458,   65.33139573),
+    //        Point(83.16683891,  -11.53539228),
+    //        Point(123.73996755, -111.00221745),
+    //        Point(5.39768613,  149.6938521),
+    //        Point(38.28235857,  121.2395262),
+    //        Point(120.5365791 , -105.65799319),
+    //        Point(-65.76238712,  125.46268328),
+    //        Point(-39.19309983,  -12.2523361),
+    //        Point(28.29766166,   -1.24934286),
+    //        Point(-5.63865253,  -21.65336384),
+    //        Point(94.82452389, -105.04749459),
+    //        Point(48.04456786,   68.3858024),
+    //};
+    int n_poly = 11;
     for (int i = 0; i < n_poly; i++) {
         std::cout << "[" << points[i].x << ", " << points[i].y << "]\n";
     }
-    inner_convex_approximation(points, n_poly);
+    int point_to_convex_indx[20] = { -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+    inner_convex_approximation_and_index(points, n_poly, point_to_convex_indx);
 
-	std::cout << "======================================================" << std::endl;
-	std::cout << "tap hop bao loi:" << n_poly << " diem" << std::endl;
-	for (int i = 0; i < n_poly; i++) {
-		std::cout << "[" << points[i].x << ", " << points[i].y << "]" << std::endl;
-	}
+    std::cout << "==============Inner Convex Approximation============" << std::endl;
+    std::cout << "tap hop bao loi:" << n_poly << " diem" << std::endl;
+    for (int i = 0; i < n_poly; i++) {
+        std::cout << "[" << points[i].x << ", " << points[i].y << "]" << std::endl;
+    }
+    std::cout << "====================================================" << std::endl;
+
+    std::cout << "chi so cac phan tu trong mang la:" << std::endl;
+
+
+    for (int i = 0; i < 20; i++) {
+        std::cout << point_to_convex_indx[i] << " ";
+    }
+
 
 }
