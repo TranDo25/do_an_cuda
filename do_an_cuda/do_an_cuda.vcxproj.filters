@@ -15,22 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="algo_1-outer_convex_revert_from_python.cpp">
+    <ClCompile Include="algo_1-outer_convex_approximation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pair.cpp">
+    <ClCompile Include="test-code.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="outer_convex_and_index.cpp">
+    <ClCompile Include="algo_1-outer_convex_and_index.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Jarvis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="outer-convex-and-index-optimize-cost.cpp">
+    <ClCompile Include="aglo_1-outer-convex-and-index-optimize-cost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="algo_2.cpp">
+    <ClCompile Include="algo_4-inner-convex-approximation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

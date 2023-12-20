@@ -127,12 +127,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="algo_2.cpp" />
+    <ClCompile Include="algo_4-inner-convex-approximation.cpp" />
     <ClCompile Include="Jarvis.cpp" />
-    <ClCompile Include="outer-convex-and-index-optimize-cost.cpp" />
-    <ClCompile Include="outer_convex_and_index.cpp" />
-    <ClCompile Include="algo_1-outer_convex_revert_from_python.cpp" />
-    <ClCompile Include="pair.cpp" />
+    <ClCompile Include="aglo_1-outer-convex-and-index-optimize-cost.cpp" />
+    <ClCompile Include="algo_1-outer_convex_and_index.cpp" />
+    <ClCompile Include="algo_1-outer_convex_approximation.cpp" />
+    <ClCompile Include="test-code.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
