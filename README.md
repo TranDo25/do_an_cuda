@@ -1,4 +1,4 @@
-# có hai file chính:
+# Thông tin các file:
 * algo_1outer_convex_from_python.cpp: dùng để thay thế hàm Jarvis
 * algo_1outer_convex_and_index.cpp: dùng để thay thế hàm Jarvis_and_index
 * algo_4_inner_convex_approximation.cpp: code của thuật toán inner convex approximation
